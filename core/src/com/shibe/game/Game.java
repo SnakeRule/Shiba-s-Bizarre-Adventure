@@ -2,6 +2,7 @@ package com.shibe.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,18 +17,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Game extends ApplicationAdapter implements InputProcessor {
 
@@ -36,6 +34,7 @@ public class Game extends ApplicationAdapter implements InputProcessor {
 
     private Stage stage;
     private Skin skin;
+    private Body dogeBody;
     private int weaponNmb = 1;
     private boolean gameOn = false;
     private boolean keyPressed;
@@ -72,6 +71,7 @@ public class Game extends ApplicationAdapter implements InputProcessor {
     private TextButton quitButton;
     Array<Body> bodies = new Array<Body>();
     private boolean pause = false;
+    FPSLogger fpsLogger = new FPSLogger();
 
 
     @Override
@@ -135,7 +135,7 @@ public class Game extends ApplicationAdapter implements InputProcessor {
         batch = new SpriteBatch();
 
         //Box2D world creation
-        world = new World(new Vector2(0, -10), true);
+        world = new World(new Vector2(0, -13), true);
 
         screenCoordinates = new Vector3(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 
@@ -165,7 +165,8 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                     for (InteractableObject interactableObject1 : interactableObjects) {
                         {
                             if (b.getBody().getUserData() == interactableObject.buttonSprite) {
-                                if (interactableObject1.objectname.equals("Door") && interactableObject1.Nmb.equals(b.getUserData())) {
+                                if (interactableObject1.objectname.equals("Door") && interactableObject1.Nmb.equals(b.getUserData()))
+                                {
                                     interactableObject1.DoorMove(interactableObject1.doorBody);
                                     for (Weapon weapon : player.weapons) {
                                         if (a.getBody().getUserData() == weapon.weaponSprite) {
@@ -175,7 +176,9 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                                         }
                                     }
                                 }
-                            } else if (a.getBody().getUserData() == interactableObject.buttonSprite) {
+                            }
+                            else if (a.getBody().getUserData() == interactableObject.buttonSprite)
+                            {
                                 if (interactableObject1.objectname.equals("Door") && interactableObject1.Nmb.equals(a.getUserData())) {
                                     interactableObject1.DoorMove(interactableObject1.doorBody);
                                     for (Weapon weapon : player.weapons) {
@@ -187,6 +190,14 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                                     }
                                 }
                             }
+                            else if (a.getBody().getUserData() == interactableObject.objectname || b.getBody().getUserData() == interactableObject.objectname)
+                            {
+                                if(a.getBody().getUserData() == player.dogeSprite || b.getBody().getUserData() == player.dogeSprite) {
+                                    player.TouchingLadder = true;
+                                    player.dogeBody.setLinearVelocity(dogeBody.getLinearVelocity().x, 0);
+                                    player.dogeBody.setGravityScale(0);
+                                }
+                            }
                         }
                     }
 
@@ -194,16 +205,18 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                 if (a.getBody().getUserData() == player.dogeSprite || b.getBody().getUserData() == player.dogeSprite) {
                     if (a.getBody().getUserData() == player.dogeSprite && b.getBody().getUserData() == "Goal") {
                         camera.setToOrtho(false, 32f, 18f);
-                        return;
                     }
+                }
                     for (Enemy enemy : enemies) {
-                        if (a.getBody().getUserData() == player.dogeSprite && b.getBody().getUserData() == enemy.dogeSprite) {
+                        if (a.isSensor() && a.getBody().getUserData() == player.dogeSprite && b.getBody().getUserData() == enemy.dogeSprite) {
                             enemies.remove(enemy);
                             destroyList.add(b.getBody());
                             break;
                         }
                     }
-                }
+
+                if((a.isSensor() && a.getBody().getUserData() == player.dogeSprite) || (b.isSensor() && b.getBody().getUserData() == player.dogeSprite))
+                    player.canJump = true;
             }
 
             @Override
@@ -214,6 +227,17 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                 if (a.getBody().getUserData() == player.dogeSprite && b.getBody().getUserData() == "Goal") {
                     camera.setToOrtho(false, 32f / 2, 18f / 2);
                 }
+                for (InteractableObject interactableObject:interactableObjects) {
+                    if (a.getBody().getUserData() == interactableObject.objectname || b.getBody().getUserData() == interactableObject.objectname)
+                    {
+                        if (a.getBody().getUserData() == player.dogeSprite || b.getBody().getUserData() == player.dogeSprite) {
+                            player.TouchingLadder = false;
+                            player.dogeBody.setGravityScale((float) 1.5);
+                        }
+                    }
+                }
+                if((a.isSensor() && a.getBody().getUserData() == player.dogeSprite) || ((b.isSensor() && b.getBody().getUserData() == player.dogeSprite)))
+                    player.canJump = false;
             }
 
             @Override
@@ -258,6 +282,7 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                     sprite.setRotation(MathUtils.radiansToDegrees * body.getAngle());
                     sprite.draw(batch); // spriteBatch must be defined elsewhere
                     if (body.getUserData() == player.dogeSprite) {
+                        dogeBody = body;
                         if (body.getPosition().y < 0) {
                             body.setTransform(level.SpawnX * WORLD_TO_BOX, level.SpawnY * WORLD_TO_BOX, 0);
                         }
@@ -269,6 +294,7 @@ public class Game extends ApplicationAdapter implements InputProcessor {
             }
             if (phoneOverlay != null) {
             }
+            fpsLogger.log();
             camera.unproject(mousePosition);
             player.AimReticle.setPosition(mousePosition.x - player.AimReticle.getWidth() / 2, mousePosition.y - player.AimReticle.getHeight() / 2);
             player.AimReticle.draw(batch);
@@ -287,17 +313,35 @@ public class Game extends ApplicationAdapter implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         for (Body body : bodies) {
-            if (body.getUserData() == player.dogeSprite) {
-                if (keycode == Input.Keys.D) {
+            if (body.getUserData() == player.dogeSprite)
+            {
+                if (keycode == Input.Keys.D)
+                {
                     body.setLinearVelocity(5, body.getLinearVelocity().y);
                     keyPressed = true;
                     rightPressed = true;
-                } else if (keycode == Input.Keys.A) {
+                }
+                else if (keycode == Input.Keys.A)
+                {
                     body.setLinearVelocity(-5, body.getLinearVelocity().y);
                     keyPressed = true;
                     leftPressed = true;
-                } else if (keycode == Input.Keys.W && body.getLinearVelocity().y > -0.1 && body.getLinearVelocity().y < 0.1) {
-                    body.applyForceToCenter(0, 350, true);
+                }
+                else if (keycode == Input.Keys.W)
+                {
+                    if(player.TouchingLadder)
+                    {
+                        body.setLinearVelocity(body.getLinearVelocity().x,5);
+                    }
+                    else {
+                        if(player.canJump)
+                        body.applyLinearImpulse(0, 10, 0, 0, true);
+                    }
+                }
+                else if (keycode == Input.Keys.S)
+                {
+                    if(player.TouchingLadder)
+                        body.setLinearVelocity(body.getLinearVelocity().x,-5);
                 }
             }
 
@@ -319,21 +363,29 @@ public class Game extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.D) {
-            for (Body body : bodies) {
-                if (body.getUserData() == player.dogeSprite) {
+        for (Body body : bodies) {
+            if (body.getUserData() == player.dogeSprite) {
+                if (keycode == Input.Keys.D) {
                     body.setLinearVelocity(0, body.getLinearVelocity().y);
                     keyPressed = false;
                     rightPressed = false;
                 }
-            }
-        }
-        if (keycode == Input.Keys.A) {
-            for (Body body : bodies) {
-                if (body.getUserData() == player.dogeSprite) {
-                    body.setLinearVelocity(0, body.getLinearVelocity().y);
-                    keyPressed = false;
-                    leftPressed = false;
+                if (keycode == Input.Keys.A) {
+                    {
+                        body.setLinearVelocity(0, body.getLinearVelocity().y);
+                        keyPressed = false;
+                        leftPressed = false;
+                    }
+                }
+                if (keycode == Input.Keys.W) {
+                    if (player.TouchingLadder) {
+                        body.setLinearVelocity(body.getLinearVelocity().x, 0);
+                    }
+                    else if(!player.TouchingLadder && player.dogeBody.getLinearVelocity().y > 0)
+                        body.applyLinearImpulse(0, body.getLinearVelocity().y / 2 * -1, 0, 0, true);
+                } else if (keycode == Input.Keys.S) {
+                    if (player.TouchingLadder)
+                        body.setLinearVelocity(body.getLinearVelocity().x, 0);
                 }
             }
         }
@@ -347,9 +399,8 @@ public class Game extends ApplicationAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        int i = 0;
         if (gameOn)
-            player.Shoot(world, player.dogeSprite.getX(), player.dogeSprite.getY(), (player.AimReticle.getX() + player.AimReticle.getWidth() / 2), player.AimReticle.getY() + player.AimReticle.getHeight() / 2, player.dogeSprite.isFlipX(), player.dogeSprite.getWidth(), player.dogeSprite.getHeight(), weaponNmb);
+            player.Shoot(world, player.dogeSprite.getX(), player.dogeSprite.getY(), (player.AimReticle.getX() + player.AimReticle.getWidth() / 2), player.AimReticle.getY() + player.AimReticle.getHeight() / 2, player.dogeSprite.isFlipX(), player.dogeSprite.getWidth(), player.dogeSprite.getHeight(), weaponNmb, dogeBody);
         return false;
     }
 
@@ -384,6 +435,11 @@ public class Game extends ApplicationAdapter implements InputProcessor {
                 player.weapons.remove(weapon);
                 break;
             }
+        }
+        if(player.weapons.size() > 200)
+        {
+            world.destroyBody(player.weapons.get(0).weaponBody);
+            player.weapons.remove(0);
         }
         destroyList.clear();
     }

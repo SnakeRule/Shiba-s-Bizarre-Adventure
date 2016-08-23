@@ -19,8 +19,8 @@ public class InteractableObject
     public Sprite doorSprite = new Sprite();
     public Sprite buttonSprite = new Sprite();
     public Body doorBody;
-    public String Nmb;
-    public String objectname;
+    public String Nmb = "";
+    public String objectname = "";
     public Boolean Moving = false;
     private Boolean doorUp = false;
     private int moveCounter;
@@ -89,6 +89,21 @@ public class InteractableObject
             }
         }
 
+        if(object.getName().equals("Ladder"))
+        {
+            objectname = object.getName();
+            BodyDef bd = new BodyDef();
+            bd.type = BodyDef.BodyType.StaticBody;
+            Body body = world.createBody(bd);
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.isSensor = true;
+            fixtureDef.filter.groupIndex = -8;
+            body.createFixture(fixtureDef);
+            body.setUserData(objectname);
+
+            shape.dispose();
+        }
         /*floorImage = new Texture("Block"+fileno+".png");
         floorSprite = new Sprite(floorImage);
         floorSprite.setSize(floorImage.getWidth()* Game.WORLD_TO_BOX, floorImage.getHeight()* Game.WORLD_TO_BOX);

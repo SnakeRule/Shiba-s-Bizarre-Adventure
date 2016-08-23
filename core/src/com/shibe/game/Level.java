@@ -1,6 +1,7 @@
 package com.shibe.game;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -39,68 +40,6 @@ public class Level
 
     public TiledMap BuildLevel(World world, Character player)
     {
-        /*player = player;
-        int row = 0;
-        int field = 0;
-        int x = 0;
-        int y = 0;
-        int f = 0;
-        objects = new ArrayList<Object>();
-        //enemies = new ArrayList<Enemy>();
-
-        for(row = 0; row < 27; row++)
-        {
-            y = 1080 - (row * 40);
-            for(field = 0; field < 24; field++)
-            {
-                x = field * 128;
-                switch(LevelData.charAt(f))
-                {
-                    case '0':
-                    {
-                        f++;
-                        break;
-                    }
-                    case '\n':
-                    {
-                        f++;
-                        break;
-                    }
-                    case '1':
-                    {
-                        ground = new InteractableObject(world, "2", x, y);
-                        objects.add(ground);
-                        f++;
-                        break;
-                    }
-                    case '2':
-                    {
-                        ground = new InteractableObject(world ,"3", x, y);
-                        objects.add(ground);
-                        f++;
-                        break;
-                    }
-                    case 'P':
-                    {
-                        player = new Character(world, x,y);
-                        f++;
-                        break;
-                    }
-                    /*case 'E':
-                    {
-                        enemy = new Enemy(x, y, world);
-                        enemies.add(enemy);
-                        f++;
-                        break;
-                    }
-                    default:
-                    {
-                        f++;
-                        break;
-                    }
-                }
-            }
-        }*/
         map = new TmxMapLoader().load("Level1.tmx");
         bg = new Texture("BackGround.jpg");
         bgSprite = new Sprite(bg);
@@ -147,29 +86,12 @@ public class Level
             bd.type = BodyDef.BodyType.StaticBody;
             Body body = world.createBody(bd);
             body.createFixture(shape, 1);
+            body.setUserData("Obstacle");
 
             shape.dispose();
         }
 
-        /*objects = map.getLayers().get("Player").getObjects();
-        for (MapObject object:objects)
-        {
-            if (object instanceof  TextureMapObject)
-            {
-                player = new Character(world, 80,300, (TextureMapObject) object);
-            }
 
-            if (object instanceof PolygonMapObject)
-            {
-                shape = getPolygon((PolygonMapObject)object);
-                player.HitBox(shape, world);
-            }
-            else if (object instanceof PolylineMapObject && player != null)
-            {
-                shape = getPolyline((PolylineMapObject)object);
-                player.HitBox(shape, world);
-            }
-        }*/
 
         objects = map.getLayers().get("Objects").getObjects();
         for(MapObject object:objects)
@@ -213,6 +135,12 @@ public class Level
             else if(object.getName().equals("Button"))
             {
                 shape = getCircle((EllipseMapObject) object);
+                interactableObject = new InteractableObject(world, shape, object);
+                interactableObjects.add(interactableObject);
+            }
+            else if(object.getName().equals("Ladder"))
+            {
+                shape = getRectangle((RectangleMapObject) object);
                 interactableObject = new InteractableObject(world, shape, object);
                 interactableObjects.add(interactableObject);
             }

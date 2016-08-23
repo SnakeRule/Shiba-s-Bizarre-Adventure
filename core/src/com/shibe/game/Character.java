@@ -15,24 +15,28 @@ import java.util.ArrayList;
  */
 public class Character
 {
+    public Body DogeFeet;
+    private BodyDef dogeFeetDef;
     private Texture dogeImage1;
     private Texture dogeImage2;
     private Texture dogeImage3;
+    public boolean TouchingLadder = false;
     private float x;
     private float y;
     public TextureMapObject shibeTextureMapObject;
     public Sprite dogeSprite;
     private BodyDef dogeBodyDef;
-    private Body dogeBody;
+    public Body dogeBody;
     public Weapon weapon;
     public ArrayList<Weapon> weapons = new ArrayList<Weapon>();
     public int LocationX;
     public int LocationY;
-    float size = (float) 1.3;
+    protected float size = (float) 1.3;
     private int animationCounter;
     private int fileno = 1;
     private Shape shape;
     private TiledMap mapData;
+    public boolean canJump;
 
     public Character(World world, RectangleMapObject rect, TiledMap map)
     {
@@ -51,7 +55,7 @@ public class Character
 
         dogeBodyDef.position.set(new Vector2(rect.getRectangle().getX()* Game.WORLD_TO_BOX, rect.getRectangle().getY()* Game.WORLD_TO_BOX));
 
-        Body dogeBody = world.createBody(dogeBodyDef);
+        dogeBody = world.createBody(dogeBodyDef);
 
         //Create a Polygon shape for the body
         PolygonShape dogeBox = new PolygonShape();
@@ -59,15 +63,18 @@ public class Character
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = dogeBox;
-        fixtureDef.density = (float) 1;
+        fixtureDef.density = (float) 1.5;
         fixtureDef.friction = (float) 0.0;
 
         //Create fixture
         dogeBody.createFixture(fixtureDef);
         // Clean up
         dogeBox.dispose();
+
+
         dogeBody.setUserData(dogeSprite);
     }
+
     public void Animate(Body dogeBody, boolean rightPressed, boolean leftPressed)
     {
         animationCounter++;
@@ -99,6 +106,16 @@ public class Character
         if(dogeBody.getLinearVelocity().x < 0 && dogeSprite.isFlipX() == false && leftPressed == true)
         {
             dogeSprite.flip(true,false);
+        }
+    }
+
+    public void Jump(Body body, Boolean pressed)
+    {
+        if(pressed)
+        {
+            for (int i = 0; i <= 5; i++) {
+                body.applyForce(0, 50, 0, 0, true);
+            }
         }
     }
 }

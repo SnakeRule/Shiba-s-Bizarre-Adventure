@@ -19,23 +19,23 @@ public class Weapon {
     private float bulletAngle;
     Timer timer = new Timer();
 
-    public Weapon(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, int weaponNmb)
+    public Weapon(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, int weaponNmb, Body dogeBody)
     {
         switch (weaponNmb)
         {
             case 1:{
-                createBullet(world,charX,charY,pointerX,pointerY,flipX,spriteWidth,spriteHeight);
+                createBullet(world,charX,charY,pointerX,pointerY,flipX,spriteWidth,spriteHeight, dogeBody);
                 break;
             }
             case 2:{
-                createRocket(world,charX,charY,pointerX,pointerY,flipX,spriteWidth,spriteHeight);
+                createRocket(world,charX,charY,pointerX,pointerY,flipX,spriteWidth,spriteHeight, dogeBody);
                 break;
             }
         }
     }
 
 
-    private void createBullet(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight)
+    private void createBullet(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, Body dogeBody)
     {
         //Loading the images
         weaponImage = new Texture("Ball.png");
@@ -68,7 +68,7 @@ public class Weapon {
         dropBox.dispose();
         weaponBody.setUserData(weaponSprite);
 
-        weaponBody.setLinearVelocity((float) (pointerX - weaponBody.getPosition().x), (float) (pointerY - weaponBody.getPosition().y));
+        weaponBody.setLinearVelocity((float) (pointerX - weaponBody.getPosition().x) + dogeBody.getLinearVelocity().x, (float) (pointerY - weaponBody.getPosition().y)+ dogeBody.getLinearVelocity().y);
         weaponBody.setTransform(weaponBody.getPosition().x, weaponBody.getPosition().y, bulletAngle);
 
         /*if(weaponBody.getLinearVelocity().x > 20 && weaponBody.getLinearVelocity().x > 0)
@@ -77,7 +77,7 @@ public class Weapon {
             weaponBody.setLinearVelocity(-20, weaponBody.getLinearVelocity().y);*/
     }
 
-    private void createRocket(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight)
+    private void createRocket(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, Body dogeBody)
     {
         //Loading the images
         weaponImage = new Texture("Rocket.png");
@@ -110,7 +110,7 @@ public class Weapon {
         weaponShape.dispose();
         weaponBody.setUserData(weaponSprite);
 
-        weaponBody.setLinearVelocity((float) (pointerX - weaponBody.getPosition().x), (float) (pointerY - weaponBody.getPosition().y));
+        weaponBody.setLinearVelocity((float) (pointerX - weaponBody.getPosition().x + dogeBody.getLinearVelocity().x), (float) (pointerY - weaponBody.getPosition().y) + dogeBody.getLinearVelocity().y);
         weaponBody.setTransform(weaponBody.getPosition().x, weaponBody.getPosition().y, bulletAngle);
         /*if(weaponBody.getLinearVelocity().x > 20 && weaponBody.getLinearVelocity().x > 0)
             weaponBody.setLinearVelocity(20, weaponBody.getLinearVelocity().y);
