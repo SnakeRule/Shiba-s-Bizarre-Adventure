@@ -241,13 +241,13 @@
     <property name="GoalHit" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="57" name="EnemySpawn" x="1649.33" y="893.333" width="42.6667" height="28">
+  <object id="57" name="EnemySpawn" x="2629.33" y="875.333" width="42.6667" height="28">
    <properties>
     <property name="EnemyType" type="int" value="1"/>
    </properties>
   </object>
   <object id="59" name="EnemySpawn" x="3802" y="871"/>
-  <object id="60" name="EnemySpawn" x="1173.33" y="610.667" width="80" height="34.6667"/>
+  <object id="60" name="EnemySpawn" x="1759.33" y="584.667" width="80" height="34.6667"/>
  </objectgroup>
  <objectgroup name="MovingObjects">
   <object id="106" name="Door" x="3008" y="638.667" width="60" height="420">

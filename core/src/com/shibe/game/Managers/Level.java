@@ -1,7 +1,11 @@
-package com.shibe.game;
+package com.shibe.game.Managers;
 
+import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -12,6 +16,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.shibe.game.Components.WorldComponent;
 
 import java.util.ArrayList;
 
@@ -28,17 +33,20 @@ public class Level
     private Array<Shape> shapes;
     public ArrayList<Object> objects;
     private Object object;
-    public Enemy enemy;
-    public ArrayList<Enemy> enemies = new ArrayList<Enemy>();
+    public EnemyManager enemy;
+    public ArrayList<EnemyManager> enemies = new ArrayList<EnemyManager>();
     public float SpawnX;
     public float SpawnY;
-    public ArrayList<InteractableObject> interactableObjects = new ArrayList<InteractableObject>();
-    public InteractableObject interactableObject;
+    public ArrayList<InteractableObjectManager> interactableObjects = new ArrayList<InteractableObjectManager>();
+    public InteractableObjectManager interactableObject;
     String LevelData;
-    Player player;
+    PlayerManager player;
     private Shape shape;
+    private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
+    private ImmutableArray<Entity> worlds;
+    private Entity e = new Entity();
 
-    public TiledMap BuildLevel(World world, Character player)
+    public TiledMap BuildLevel(World world)
     {
         map = new TmxMapLoader().load("Level1.tmx");
         bg = new Texture("BackGround.jpg");
@@ -46,22 +54,13 @@ public class Level
         return map;
     }
 
-    /*public void LoadLevel(int levelNumber)
-    {
-        FileHandle fileHandle;
-        try {
-            fileHandle = Gdx.files.internal("Level"+levelNumber+".txt");
-            LevelData = fileHandle.readString();
-        } catch (Exception exception) {
-        }
-        finally {
-        }
-    }*/
-
-    public void MapBodyBuilder(World world, TiledMap map)
+    public void MapBodyBuilder(TiledMap map, Engine engine)
     {
         MapObjects objects = new MapObjects();
         objects = map.getLayers().get("Obstacles").getObjects();
+        worlds = engine.getEntitiesFor(Family.all(WorldComponent.class).get());
+        e = worlds.get(0);
+        WorldComponent world = wm.get(e);
 
         for (MapObject object:objects)
         {
@@ -84,7 +83,7 @@ public class Level
 
             BodyDef bd = new BodyDef();
             bd.type = BodyDef.BodyType.StaticBody;
-            Body body = world.createBody(bd);
+            Body body = world.world.createBody(bd);
             body.createFixture(shape, 1);
             body.setUserData("Obstacle");
 
@@ -100,16 +99,18 @@ public class Level
             if(object.getName().equals("StartPoint"))
             {
                 shape = getRectangle((RectangleMapObject)object);
-                player = new Player(world, (RectangleMapObject)object, map);
+                player = new PlayerManager(world.world, (RectangleMapObject)object, map);
                 SpawnX = ((RectangleMapObject) object).getRectangle().x;
                 SpawnY = ((RectangleMapObject) object).getRectangle().y;
+
+                shape.dispose();
             }
             else if(object.getName().equals("Goal"))
             {
                 shape = getRectangle((RectangleMapObject)object);
                 BodyDef bd = new BodyDef();
                 bd.type = BodyDef.BodyType.StaticBody;
-                Body body = world.createBody(bd);
+                Body body = world.world.createBody(bd);
                 body.createFixture(shape, 1);
                 body.setUserData("Goal");
 
@@ -118,8 +119,10 @@ public class Level
             else if(object.getName().equals("EnemySpawn"))
             {
                 shape = getRectangle((RectangleMapObject)object);
-                enemy = new Enemy(world, (RectangleMapObject)object, map);
+                enemy = new EnemyManager(world.world, (RectangleMapObject)object, map);
                 enemies.add(enemy);
+
+                shape.dispose();
             }
         }
 
@@ -129,19 +132,19 @@ public class Level
             if(object.getName().equals("Door"))
             {
                 shape = getRectangle((RectangleMapObject) object);
-                interactableObject = new InteractableObject(world, shape, object);
+                interactableObject = new InteractableObjectManager(world.world, shape, object);
                 interactableObjects.add(interactableObject);
             }
             else if(object.getName().equals("Button"))
             {
                 shape = getCircle((EllipseMapObject) object);
-                interactableObject = new InteractableObject(world, shape, object);
+                interactableObject = new InteractableObjectManager(world.world, shape, object);
                 interactableObjects.add(interactableObject);
             }
             else if(object.getName().equals("Ladder"))
             {
                 shape = getRectangle((RectangleMapObject) object);
-                interactableObject = new InteractableObject(world, shape, object);
+                interactableObject = new InteractableObjectManager(world.world, shape, object);
                 interactableObjects.add(interactableObject);
             }
         }
