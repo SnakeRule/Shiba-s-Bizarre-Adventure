@@ -28,7 +28,7 @@ public class Game extends ApplicationAdapter {
 
     public static boolean Menu;
     private Stage stage;
-    public static boolean gameOn = false;
+    private static boolean gameOn = false;
     public static boolean gameInit = false;
     private TiledMap map;
     private SpriteBatch hudbatch;
@@ -42,13 +42,13 @@ public class Game extends ApplicationAdapter {
     public static ArrayList<Object> objects;
     private Music rainMusic;
     private SpriteBatch batch;
-    Vector3 screenCoordinates;
+    private Vector3 screenCoordinates;
     private World world;
     public static ArrayList<Entity> entities = new ArrayList<Entity>();
     private PhoneOverlay phoneOverlay;
     public static Engine engine = new Engine();
     public static boolean pause = false;
-    FPSLogger fpsLogger = new FPSLogger();
+    private FPSLogger fpsLogger = new FPSLogger();
 
     private MovementSystem movementSystem = new MovementSystem();
     private DrawSystem drawSystem = new DrawSystem();
@@ -97,7 +97,7 @@ public class Game extends ApplicationAdapter {
         Menu = true;
     }
 
-    protected void initGame() {
+    private void initGame() {
         screenCoordinates = new Vector3(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
         Gdx.input.setInputProcessor(new ActionProcessor());
 

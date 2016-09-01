@@ -10,7 +10,7 @@ import com.shibe.game.Managers.Game;
 public class PhoneOverlay
 {
     private Texture buttonImage;
-    public Sprite ArrowUp;
+    private Sprite ArrowUp;
     public Sprite ArrowRight;
     public Sprite ArrowDown;
     public Sprite ArrowLeft;

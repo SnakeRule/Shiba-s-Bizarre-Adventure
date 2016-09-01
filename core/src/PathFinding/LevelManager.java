@@ -9,15 +9,15 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 /**
  * Created by Jere on 24.8.2016.
  */
-public class LevelManager {
+class LevelManager {
     public static int lvlTileWidth;
     public static int lvlTileHeight;
-    public static int lvlPixelWidth;
-    public static int lvlPixelHeight;
+    private static int lvlPixelWidth;
+    private static int lvlPixelHeight;
     public static int tilePixelWidth;
     public static int tilePixelHeight;
-    public static TiledMap tiledMap;
-    public static GraphImp graph;
+    private static TiledMap tiledMap;
+    private static GraphImp graph;
 
     public static void loadLevel(String filePath){
         tiledMap = new TmxMapLoader().load(filePath);

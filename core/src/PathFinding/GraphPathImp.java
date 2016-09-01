@@ -8,7 +8,7 @@ import java.util.Iterator;
 /**
  * Created by Jere on 25.8.2016.
  */
-public class GraphPathImp implements GraphPath<Node> {
+class GraphPathImp implements GraphPath<Node> {
     private Array<Node> nodes = new Array<Node>();
 
     public GraphPathImp() {}

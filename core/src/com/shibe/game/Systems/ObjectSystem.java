@@ -9,9 +9,9 @@ import com.shibe.game.Components.ObjectComponent;
  * Created by Jere on 30.8.2016.
  */
 public class ObjectSystem extends EntitySystem {
-    ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
-    ImmutableArray<Entity> objects;
-    ImmutableArray<Entity> doorObjects;
+    private ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
+    private ImmutableArray<Entity> objects;
+    private ImmutableArray<Entity> doorObjects;
     ObjectComponent doorObject;
 
     public ObjectSystem() {

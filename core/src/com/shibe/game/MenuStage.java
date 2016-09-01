@@ -4,9 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -19,8 +17,9 @@ public class MenuStage
 {
     private Skin skin;
     private Table table;
-    public static TextButton startButton;
-    public static TextButton quitButton;
+    private static TextButton startButton;
+    private static TextButton quitButton;
+    private static Label instructions;
     private Stage stage;
 
     public Stage CreateStage()
@@ -37,11 +36,14 @@ public class MenuStage
 
         startButton = new TextButton("New Game", skin);
         quitButton = new TextButton("Quit Game", skin);
+        instructions = new Label("1.Ball \n2.Missile \n3.Ultra Balls (Slows the web browser version)", skin);
 
         table.padTop(30);
         table.add(startButton).padBottom(30);
         table.row();
         table.add(quitButton);
+        table.row();
+        table.add(instructions);
 
         stage.addActor(table);
 

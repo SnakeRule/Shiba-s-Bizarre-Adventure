@@ -23,24 +23,24 @@ import java.util.ArrayList;
 /**
  * Created by Jere on 4.6.2016.
  */
-public class Level
+class Level
 {
-    public Texture bg;
-    float ppt = Game.WORLD_TO_BOX;
-    public Sprite bgSprite;
+    private Texture bg;
+    private float ppt = Game.WORLD_TO_BOX;
+    private Sprite bgSprite;
     private String objectName;
-    public TiledMap map;
+    private TiledMap map;
     private Array<Shape> shapes;
     public ArrayList<Object> objects;
     private Object object;
-    public EnemyManager enemy;
-    public ArrayList<EnemyManager> enemies = new ArrayList<EnemyManager>();
-    public float SpawnX;
-    public float SpawnY;
-    public ArrayList<InteractableObjectManager> interactableObjects = new ArrayList<InteractableObjectManager>();
-    public InteractableObjectManager interactableObject;
+    private EnemyManager enemy;
+    private ArrayList<EnemyManager> enemies = new ArrayList<EnemyManager>();
+    private float SpawnX;
+    private float SpawnY;
+    private ArrayList<InteractableObjectManager> interactableObjects = new ArrayList<InteractableObjectManager>();
+    private InteractableObjectManager interactableObject;
     String LevelData;
-    PlayerManager player;
+    private PlayerManager player;
     private Shape shape;
     private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
     private ImmutableArray<Entity> worlds;

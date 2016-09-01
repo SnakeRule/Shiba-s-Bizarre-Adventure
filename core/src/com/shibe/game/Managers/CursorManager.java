@@ -11,12 +11,12 @@ import com.shibe.game.Systems.CursorSystem;
 /**
  * Created by Jere on 30.8.2016.
  */
-public class CursorManager
+class CursorManager
 {
-    Sprite AimReticle;
-    CursorComponent cursorComponent;
-    SpriteComponent spriteComponent;
-    Entity e = new Entity();
+    private Sprite AimReticle;
+    private CursorComponent cursorComponent;
+    private SpriteComponent spriteComponent;
+    private Entity e = new Entity();
 
     public CursorManager(Engine engine)
     {

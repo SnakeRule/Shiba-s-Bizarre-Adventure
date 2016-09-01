@@ -5,7 +5,7 @@ import com.badlogic.gdx.ai.pfa.Connection;
 /**
  * Created by Jere on 24.8.2016.
  */
-public class ConnectionImp implements Connection<Node> {
+class ConnectionImp implements Connection<Node> {
     private Node toNode;
     private Node fromNode;
     private float cost;

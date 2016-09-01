@@ -17,40 +17,40 @@ import java.util.ArrayList;
 /**
  * Created by Jere on 11.8.2016.
  */
-public class CharacterManager
+class CharacterManager
 {
     PositionComponent positionComponent = new PositionComponent();
     PhysicsComponent physicsComponent = new PhysicsComponent();
     SpriteComponent spriteComponent = new SpriteComponent();
     public Body DogeFeet;
     private BodyDef dogeFeetDef;
-    protected Texture dogeImage1;
-    protected Texture dogeImage2;
-    protected Texture dogeImage3;
+    Texture dogeImage1;
+    Texture dogeImage2;
+    Texture dogeImage3;
     public boolean TouchingLadder = false;
     private float x;
     private float y;
     public TextureMapObject shibeTextureMapObject;
-    public Sprite dogeSprite;
+    Sprite dogeSprite;
     private BodyDef dogeBodyDef;
-    public Body dogeBody;
+    Body dogeBody;
     public WeaponManager weapon;
     public int footContacts = 0;
-    public ArrayList<WeaponManager> weapons = new ArrayList<WeaponManager>();
-    protected float size = (float) 1.6;
+    ArrayList<WeaponManager> weapons = new ArrayList<WeaponManager>();
+    private float size = (float) 1.6;
     protected int animationCounter;
     protected int fileno = 1;
-    public boolean moveLeft;
-    public boolean moveRight;
-    public boolean Jump;
-    protected Fixture feetFixture;
-    protected Fixture fixture;
+    boolean moveLeft;
+    boolean moveRight;
+    boolean Jump;
+    Fixture feetFixture;
+    Fixture fixture;
     private TiledMap mapData;
-    public boolean canJump;
+    boolean canJump;
     Entity e = new Entity();
 
 
-    public CharacterManager(World world, RectangleMapObject rect, TiledMap map)
+    CharacterManager(World world, RectangleMapObject rect, TiledMap map)
     {
         mapData = map;
         dogeImage1 = new Texture("SHIBA1.png");

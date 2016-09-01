@@ -5,7 +5,7 @@ import com.badlogic.gdx.ai.pfa.Heuristic;
 /**
  * Created by Jere on 25.8.2016.
  */
-public class HeuristicImp implements Heuristic<Node> {
+class HeuristicImp implements Heuristic<Node> {
     @Override
     public float estimate(Node startNode, Node endNode) {
         int startIndex = startNode.getIndex();

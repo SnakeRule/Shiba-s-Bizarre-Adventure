@@ -8,10 +8,10 @@ import com.shibe.game.Components.CameraComponent;
 /**
  * Created by Jere on 30.8.2016.
  */
-public class CameraManager
+class CameraManager
 {
-    OrthographicCamera camera;
-    Entity cameraEntity = new Entity();
+    private OrthographicCamera camera;
+    private Entity cameraEntity = new Entity();
 
     public CameraManager(Engine engine)
     {

@@ -6,12 +6,12 @@ import com.badlogic.gdx.physics.box2d.*;
 /**
  * Created by Jere on 27.8.2016.
  */
-public class CollisionComponent implements Component
+class CollisionComponent implements Component
 {
-    public ContactListener contactListener;
-    public Body bodyA;
-    public Body bodyB;
-    public boolean collision;
+    private ContactListener contactListener;
+    private Body bodyA;
+    private Body bodyB;
+    private boolean collision;
 
     public void setContactListener(ContactListener c)
     {

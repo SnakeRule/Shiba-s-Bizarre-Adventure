@@ -21,20 +21,20 @@ import com.shibe.game.Managers.Game;
 public class InteractableObjectManager
 {
     private Texture objectImage;
-    public TextureRegion objectRegion;
-    public Sprite objectSprite;
-    public Body objectBody;
-    public String Nmb;
-    public String objectname = "";
-    public Boolean Moving = false;
+    private TextureRegion objectRegion;
+    private Sprite objectSprite;
+    private Body objectBody;
+    private String Nmb;
+    private String objectname = "";
+    private Boolean Moving = false;
     private Boolean doorUp = false;
     private int moveCounter;
-    RectangleMapObject rect;
-    EllipseMapObject circle;
-    PhysicsComponent physicsComponent;
-    PositionComponent positionComponent;
-    SpriteComponent spriteComponent;
-    ObjectComponent objectComponent;
+    private RectangleMapObject rect;
+    private EllipseMapObject circle;
+    private PhysicsComponent physicsComponent;
+    private PositionComponent positionComponent;
+    private SpriteComponent spriteComponent;
+    private ObjectComponent objectComponent;
 
     public InteractableObjectManager(World world, Shape shape, MapObject object)
     {

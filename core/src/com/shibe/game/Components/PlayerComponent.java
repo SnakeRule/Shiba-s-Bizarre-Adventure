@@ -14,13 +14,13 @@ import java.util.ArrayList;
  */
 public class PlayerComponent implements Component
 {
-    public boolean moveLeft;
-    public boolean moveRight;
-    public boolean jump;
+    private boolean moveLeft;
+    private boolean moveRight;
+    private boolean jump;
     public boolean TouchingLadder;
     public Body body;
-    public Fixture feetFixture;
-    public Fixture mainFixture;
+    private Fixture feetFixture;
+    private Fixture mainFixture;
     public Sprite sprite;
     public ArrayList<WeaponManager> weapons;
     public boolean canJump;

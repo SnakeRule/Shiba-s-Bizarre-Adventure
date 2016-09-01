@@ -10,7 +10,7 @@ import com.shibe.game.Components.WorldComponent;
 /**
  * Created by Jere on 30.8.2016.
  */
-public class WorldManager
+class WorldManager
 {
     private final World world;
     private final Box2DDebugRenderer debugRenderer;

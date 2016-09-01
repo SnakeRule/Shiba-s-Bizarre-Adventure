@@ -18,17 +18,17 @@ import com.shibe.game.Components.WeaponComponent;
 public class WeaponManager {
     private WeaponComponent weaponComponent = new WeaponComponent();
     private Texture weaponImage;
-    public Sprite weaponSprite = new Sprite();
+    private Sprite weaponSprite = new Sprite();
     private Sound dropSound;
     public Body weaponBody;
-    public boolean destroy = false;
+    private boolean destroy = false;
     private float bulletAngle;
     private Fixture weaponFixture;
     private int damageMade;
     Timer timer = new Timer();
-    PhysicsComponent physicsComponent = new PhysicsComponent();
-    SpriteComponent spriteComponent = new SpriteComponent();
-    PositionComponent positionComponent = new PositionComponent();
+    private PhysicsComponent physicsComponent = new PhysicsComponent();
+    private SpriteComponent spriteComponent = new SpriteComponent();
+    private PositionComponent positionComponent = new PositionComponent();
     public Entity e = new Entity();
 
     public WeaponManager(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, int weaponNmb, Body dogeBody, String Owner)
@@ -114,7 +114,7 @@ public class WeaponManager {
         weaponImage = new Texture("Rocket.png");
 
         weaponSprite = new Sprite(weaponImage);
-        weaponSprite.setSize(weaponImage.getWidth()/5 * Game.WORLD_TO_BOX, weaponImage.getHeight()/5 * Game.WORLD_TO_BOX);
+        weaponSprite.setSize(weaponImage.getWidth()/8 * Game.WORLD_TO_BOX, weaponImage.getHeight()/8 * Game.WORLD_TO_BOX);
         weaponSprite.setOrigin(weaponSprite.getWidth() / 2, weaponSprite.getHeight() / 2);
 
         BodyDef weaponBodyDef = new BodyDef();

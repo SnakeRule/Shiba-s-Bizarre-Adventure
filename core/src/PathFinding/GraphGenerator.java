@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Created by Jere on 24.8.2016.
  */
-public class GraphGenerator {
+class GraphGenerator {
     public static GraphImp generateGraph(TiledMap map){
         Array<Node> nodes = new Array<Node>();
 

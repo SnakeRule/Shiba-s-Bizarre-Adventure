@@ -13,10 +13,10 @@ import com.shibe.game.Components.SpriteComponent;
 /**
  * Created by Jere on 18.8.2016.
  */
-public class PlayerManager extends CharacterManager {
+class PlayerManager extends CharacterManager {
     public Sprite AimReticle;
     private Entity playerEntity = new Entity();
-    public PlayerComponent playerComponent = new PlayerComponent();
+    private PlayerComponent playerComponent = new PlayerComponent();
 
     public PlayerManager(World world, RectangleMapObject rect, TiledMap map) {
         super(world, rect, map);

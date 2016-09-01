@@ -16,11 +16,11 @@ public class CollisionManager implements ContactListener
     private Engine engine;
     private World world;
 
-    ComponentMapper<PlayerComponent> pm = ComponentMapper.getFor(PlayerComponent.class);
-    ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
-    ComponentMapper<EnemyComponent> em = ComponentMapper.getFor(EnemyComponent.class);
-    ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
-    ComponentMapper<WeaponComponent> we = ComponentMapper.getFor(WeaponComponent.class);
+    private ComponentMapper<PlayerComponent> pm = ComponentMapper.getFor(PlayerComponent.class);
+    private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
+    private ComponentMapper<EnemyComponent> em = ComponentMapper.getFor(EnemyComponent.class);
+    private ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
+    private ComponentMapper<WeaponComponent> we = ComponentMapper.getFor(WeaponComponent.class);
     ImmutableArray<Entity> players;
     ImmutableArray<Entity> enemies;
     Entity collideeA = new Entity();
@@ -41,7 +41,7 @@ public class CollisionManager implements ContactListener
         }
     }
 
-    public void CreateCollision(int type, Fixture a, Fixture b)
+    private void CreateCollision(int type, Fixture a, Fixture b)
     {
         switch (type)
         {
@@ -120,6 +120,37 @@ public class CollisionManager implements ContactListener
                 enemy.moveRight = true;
                 break;
             }
+            case 8:
+            {
+                if(a.getUserData() == "Weapon" && !b.isSensor())
+                {
+                    WeaponComponent weapon = we.get((Entity) a.getBody().getUserData());
+                    if(weapon.type != 1)
+                        weapon.Delete = true;
+                }
+                else if(b.getUserData() == "Weapon" && !a.isSensor())
+                {
+                    WeaponComponent weapon = we.get((Entity) b.getBody().getUserData());
+                    if(weapon.type != 1)
+                        weapon.Delete = true;
+                }
+                break;
+            }
+            case 9:
+            {
+                if(a.getUserData() == "Weapon")
+                {
+                    WeaponComponent weapon = we.get((Entity) a.getBody().getUserData());
+                    if(weapon.type != 1)
+                        weapon.Delete = true;
+                }
+                if(b.getUserData() == "Weapon")
+                {
+                    WeaponComponent weapon = we.get((Entity) b.getBody().getUserData());
+                    if(weapon.type != 1)
+                        weapon.Delete = true;
+                }
+            }
         }
     }
 
@@ -169,6 +200,14 @@ public class CollisionManager implements ContactListener
         else if(contact.getFixtureB().getUserData() == "Right" && contact.getFixtureA().getUserData() == "PlayerManager")
         {
             CreateCollision(7, contact.getFixtureB(), contact.getFixtureA());
+        }
+        if(contact.getFixtureA().getUserData() == "Weapon" || contact.getFixtureB().getUserData() == "Weapon")
+        {
+            CreateCollision(8, contact.getFixtureA(),contact.getFixtureB());
+        }
+        if(contact.getFixtureA().getUserData() == "Weapon" && contact.getFixtureB().getUserData() == "Weapon")
+        {
+            CreateCollision(9, contact.getFixtureA(),contact.getFixtureB());
         }
     }
 

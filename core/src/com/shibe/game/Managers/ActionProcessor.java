@@ -35,6 +35,9 @@ public class ActionProcessor implements InputProcessor
         if(keycode == Input.Keys.NUM_2) {
             WeaponNmb = 2;
         }
+        if(keycode == Input.Keys.NUM_3) {
+            WeaponNmb = 3;
+        }
         if(keycode == Input.Keys.ESCAPE)
             Game.Menu = true;
         return false;

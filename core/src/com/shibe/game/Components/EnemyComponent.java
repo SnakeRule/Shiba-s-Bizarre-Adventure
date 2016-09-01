@@ -15,14 +15,14 @@ public class EnemyComponent implements Component
 {
     public boolean moveLeft;
     public boolean moveRight;
-    public boolean jump;
+    private boolean jump;
     public Body body;
-    public Fixture feetFixture;
-    public Fixture LeftSensor;
-    public Fixture RightSensor;
+    private Fixture feetFixture;
+    private Fixture LeftSensor;
+    private Fixture RightSensor;
     public Sprite sprite;
-    public ArrayList<WeaponManager> weapons;
-    public boolean canJump;
+    private ArrayList<WeaponManager> weapons;
+    private boolean canJump;
     public int health;
 
     public void setEnemy(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Sprite s, ArrayList<WeaponManager> weapons, Fixture leftSensor, Fixture rightSensor, boolean canJump, int hp)

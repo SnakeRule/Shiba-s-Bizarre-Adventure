@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.Managers.ActionProcessor;
 import com.shibe.game.Components.CursorComponent;
 import com.shibe.game.Components.PlayerComponent;
@@ -21,6 +22,8 @@ public class PlayerSystem extends EntitySystem
     private ImmutableArray<Entity> players;
     private ImmutableArray<Entity> worlds;
     private ImmutableArray<Entity> cursors;
+    private int ballTimer = 15;
+    private int missileTimer = 25;
     private ComponentMapper<PlayerComponent> pm = ComponentMapper.getFor(PlayerComponent.class);
     private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
     private ComponentMapper<CursorComponent> cm = ComponentMapper.getFor(CursorComponent.class);
@@ -85,8 +88,34 @@ public class PlayerSystem extends EntitySystem
             Entity cursorEntity = cursors.get(0);
             CursorComponent cursor = cm.get(cursorEntity);
 
-            Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body, player);
-            ActionProcessor.SHOOT = false;
+            if(ActionProcessor.WeaponNmb == 1) {
+                if(ballTimer >= 15) {
+                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body, player);
+                    ballTimer = 0;
+                }
+                ballTimer++;
+            }
+            if(ActionProcessor.WeaponNmb == 2)
+            {
+                if(missileTimer >= 25)
+                {
+                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body, player);
+                    missileTimer = 0;
+                }
+                missileTimer++;
+            }
+            if(ActionProcessor.WeaponNmb == 3) {
+                if(ballTimer >= 1) {
+                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), 1, player.body, player);
+                    ballTimer = 0;
+                }
+                ballTimer++;
+            }
+        }
+        if(!ActionProcessor.SHOOT)
+        {
+            ballTimer = 15;
+            missileTimer = 25;
         }
 
         if(player.body.getLinearVelocity().x < 0 || player.body.getLinearVelocity().x > 0)
@@ -95,12 +124,12 @@ public class PlayerSystem extends EntitySystem
             super.update(deltaTime);
     }
 
-    public void Shoot(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double width, double height, int weaponNmb, Body dogeBody, PlayerComponent player)
+    private void Shoot(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double width, double height, int weaponNmb, Body dogeBody, PlayerComponent player)
     {
         weapon = new WeaponManager(world, charX, charY, pointerX, pointerY, flipX, width, height, weaponNmb, dogeBody, "PlayerManager");
     }
 
-    public void Animate()
+    private void Animate()
     {
         Entity entity = players.get(0);
         PlayerComponent player = pm.get(entity);

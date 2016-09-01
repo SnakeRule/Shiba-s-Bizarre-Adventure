@@ -13,9 +13,9 @@ import com.shibe.game.Components.SpriteComponent;
  */
 public class EnemyManager extends CharacterManager
 {
-    public boolean Left;
-    public boolean Right;
-    public boolean Jump;
+    private boolean Left;
+    private boolean Right;
+    private boolean Jump;
     private int health;
     private EnemyComponent enemyComponent;
 

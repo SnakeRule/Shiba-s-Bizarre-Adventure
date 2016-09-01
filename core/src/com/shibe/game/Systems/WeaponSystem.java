@@ -9,8 +9,8 @@ import com.shibe.game.Components.WeaponComponent;
  */
 public class WeaponSystem extends EntitySystem
 {
-    ComponentMapper<WeaponComponent> wm = ComponentMapper.getFor(WeaponComponent.class);
-    ImmutableArray<Entity> weapons;
+    private ComponentMapper<WeaponComponent> wm = ComponentMapper.getFor(WeaponComponent.class);
+    private ImmutableArray<Entity> weapons;
 
     public WeaponSystem() {
         super();
@@ -36,7 +36,7 @@ public class WeaponSystem extends EntitySystem
                 DestroySystem.BodyDestroyList.add(weapon.body);
                 DestroySystem.EntityDestroyList.add(e);
             }
-            if(weapon.timer > 1000)
+            if(weapon.timer > 500)
                 weapon.Delete = true;
         }
 

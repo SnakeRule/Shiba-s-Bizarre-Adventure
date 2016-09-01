@@ -11,13 +11,13 @@ import com.shibe.game.Components.CursorComponent;
  */
 public class CursorSystem extends EntitySystem
 {
-    ComponentMapper<CursorComponent> cm = ComponentMapper.getFor(CursorComponent.class);
-    ComponentMapper<CameraComponent> cam = ComponentMapper.getFor(CameraComponent.class);
-    ImmutableArray<Entity> cursors;
-    ImmutableArray<Entity> cameras;
-    CursorComponent cursor;
-    CameraComponent camera;
-    Entity e = new Entity();
+    private ComponentMapper<CursorComponent> cm = ComponentMapper.getFor(CursorComponent.class);
+    private ComponentMapper<CameraComponent> cam = ComponentMapper.getFor(CameraComponent.class);
+    private ImmutableArray<Entity> cursors;
+    private ImmutableArray<Entity> cameras;
+    private CursorComponent cursor;
+    private CameraComponent camera;
+    private Entity e = new Entity();
 
     public CursorSystem() {
         super();
