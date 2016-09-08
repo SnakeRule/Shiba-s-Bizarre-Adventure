@@ -1,5 +1,6 @@
 package com.shibe.game.Managers;
 
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
@@ -17,11 +18,17 @@ public class EnemyManager extends CharacterManager
     private boolean Right;
     private boolean Jump;
     private int health;
+    private int enemyType;
+    private int spawnTrigger;
     private EnemyComponent enemyComponent;
 
-    public EnemyManager(World world, RectangleMapObject rect, TiledMap map) {
-        super(world, rect, map);
+    public EnemyManager(World world, float SpawnX, float SpawnY) {
+        super(world, SpawnX, SpawnY);
+        CreateDog(world, SpawnX, SpawnY);
+    }
 
+    private void CreateDog(World world, float SpawnX, float SpawnY)
+    {
         health = 100;
 
         positionComponent.setX(dogeBody.getPosition().x);
@@ -37,37 +44,40 @@ public class EnemyManager extends CharacterManager
         physicsComponent.setBody(dogeBody);
         e.add(physicsComponent);
 
-        PolygonShape leftSensorBox = new PolygonShape();
-        leftSensorBox.setAsBox((float) 2.7,dogeSprite.getHeight(),new Vector2(-3,0),0);
+        PolygonShape RearSensorBox = new PolygonShape();
+        RearSensorBox.setAsBox((float) 2.7,dogeSprite.getHeight(),new Vector2(-3,0),0);
 
-        FixtureDef leftFixtureDef = new FixtureDef();
-        leftFixtureDef.isSensor = true;
-        leftFixtureDef.shape = leftSensorBox;
-        leftFixtureDef.filter.categoryBits = 0x0004;
-        leftFixtureDef.filter.maskBits = 0x0008;
+        FixtureDef RearFixtureDef = new FixtureDef();
+        RearFixtureDef.isSensor = true;
+        RearFixtureDef.shape = RearSensorBox;
+        RearFixtureDef.filter.categoryBits = CollisionFilterManager.ENEMY_SENSOR;
+        RearFixtureDef.filter.maskBits = (short) (~CollisionFilterManager.NONE & CollisionFilterManager.PLAYER);
 
-        Fixture leftFixture = dogeBody.createFixture(leftFixtureDef);
-        leftFixture.setUserData("Left");
+        Fixture RearFixture = dogeBody.createFixture(RearFixtureDef);
+        RearFixture.setUserData("Left");
 
-        leftSensorBox.dispose();
+        RearSensorBox.dispose();
 
-        PolygonShape RightsensorBox = new PolygonShape();
-        RightsensorBox.setAsBox((float) 2.7,dogeSprite.getHeight(),new Vector2(3,0),0);
+        PolygonShape FrontsensorBox = new PolygonShape();
+        FrontsensorBox.setAsBox((float) 2.7,dogeSprite.getHeight(),new Vector2(3,0),0);
 
-        FixtureDef RightFixtureDef = new FixtureDef();
-        RightFixtureDef.isSensor = true;
-        RightFixtureDef.shape = RightsensorBox;
-        RightFixtureDef.filter.categoryBits = 0x0004;
-        RightFixtureDef.filter.maskBits = 0x0008;
+        FixtureDef FrontFixtureDef = new FixtureDef();
+        FrontFixtureDef.isSensor = true;
+        FrontFixtureDef.shape = FrontsensorBox;
+        FrontFixtureDef.filter.categoryBits = CollisionFilterManager.ENEMY_SENSOR;
+        FrontFixtureDef.filter.maskBits = (short) (~CollisionFilterManager.NONE & CollisionFilterManager.PLAYER);
 
-        Fixture Rightfixture = dogeBody.createFixture(RightFixtureDef);
-        Rightfixture.setUserData("Right");
+        Fixture Frontfixture = dogeBody.createFixture(FrontFixtureDef);
+        Frontfixture.setUserData("Right");
 
-        fixture.setUserData("EnemyManager");
+        Filter filter = new Filter();
+        filter.categoryBits = CollisionFilterManager.ENEMY;
+        fixture.setFilterData(filter);
+        fixture.setUserData("Enemy");
         dogeBody.setUserData(e);
 
         enemyComponent = new EnemyComponent();
-        enemyComponent.setEnemy(Left,Right, Jump, dogeBody, feetFixture, dogeSprite, weapons, leftFixture, Rightfixture, canJump, health);
+        enemyComponent.setEnemy(Left,Right, Jump, dogeBody, feetFixture, dogeSprite, weapons, RearFixture, Frontfixture, canJump, health, spawnTrigger);
         e.add(enemyComponent);
 
         Game.engine.addEntity(e);

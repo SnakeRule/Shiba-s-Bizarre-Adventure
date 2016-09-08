@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.Components.PhysicsComponent;
 import com.shibe.game.Components.PositionComponent;
 import com.shibe.game.Components.SpriteComponent;
@@ -25,10 +24,11 @@ public class WeaponManager {
     private float bulletAngle;
     private Fixture weaponFixture;
     private int damageMade;
-    Timer timer = new Timer();
     private PhysicsComponent physicsComponent = new PhysicsComponent();
     private SpriteComponent spriteComponent = new SpriteComponent();
     private PositionComponent positionComponent = new PositionComponent();
+    private Vector2 bulletVector;
+    private Vector2 bulletVectorNormalized;
     public Entity e = new Entity();
 
     public WeaponManager(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, int weaponNmb, Body dogeBody, String Owner)
@@ -50,6 +50,23 @@ public class WeaponManager {
         positionComponent.setY(weaponSprite.getY());
         positionComponent.setAngle(weaponBody.getAngle());
         e.add(positionComponent);
+        Filter filter = new Filter();
+        if(weaponNmb == 1)
+        {
+            filter.categoryBits = CollisionFilterManager.COLLIDE_PROJECTILE;
+            filter.maskBits = (short) (~CollisionFilterManager.NON_COLLIDE_PROJECTILE);
+            weaponFixture.setFilterData(filter);
+        }
+        if(weaponNmb != 1 && Owner == "Player") {
+            filter.categoryBits = CollisionFilterManager.NON_COLLIDE_PROJECTILE;
+            filter.maskBits = (short) (~CollisionFilterManager.PLAYER & ~CollisionFilterManager.NON_COLLIDE_PROJECTILE);
+            weaponFixture.setFilterData(filter);
+        }
+        else if(weaponNmb != 1 && Owner == "Enemy") {
+            filter.categoryBits = CollisionFilterManager.NON_COLLIDE_PROJECTILE;
+            filter.maskBits = (short) (~CollisionFilterManager.ENEMY & ~CollisionFilterManager.NON_COLLIDE_PROJECTILE);
+            weaponFixture.setFilterData(filter);
+        }
         weaponFixture.setUserData("Weapon");
         weaponBody.setUserData(e);
         physicsComponent.setBody(weaponBody);
@@ -94,17 +111,14 @@ public class WeaponManager {
         fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.6f; // Make it bounce a little bit
         bulletAngle = (float) Math.atan2(pointerY - charY, pointerX - charX);
+        bulletVector = new Vector2((float) (pointerX - weaponBody.getPosition().x) + dogeBody.getLinearVelocity().x, (float) (pointerY - weaponBody.getPosition().y));
+        bulletVectorNormalized = bulletVector.nor();
 
         weaponFixture = weaponBody.createFixture(fixtureDef);
         ballCircle.dispose();
 
         weaponBody.setTransform(weaponBody.getPosition().x, weaponBody.getPosition().y, bulletAngle);
-        weaponBody.setLinearVelocity((float) (pointerX - weaponBody.getPosition().x) + dogeBody.getLinearVelocity().x, (float) (pointerY - weaponBody.getPosition().y)+ dogeBody.getLinearVelocity().y);
-
-        /*if(weaponBody.getLinearVelocity().x > 20 && weaponBody.getLinearVelocity().x > 0)
-            weaponBody.setLinearVelocity(20, weaponBody.getLinearVelocity().y);
-        else if(weaponBody.getLinearVelocity().x < -20 && weaponBody.getLinearVelocity().x < 0)
-            weaponBody.setLinearVelocity(-20, weaponBody.getLinearVelocity().y);*/
+        weaponBody.setLinearVelocity(bulletVectorNormalized.x * 6, bulletVectorNormalized.y * 6);
     }
 
     private void createMissile(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double spriteWidth, double spriteHeight, Body dogeBody)
@@ -121,10 +135,10 @@ public class WeaponManager {
         weaponBodyDef.type = BodyDef.BodyType.DynamicBody;
 
         if(flipX == false) {
-            weaponBodyDef.position.set(new Vector2(charX + (float) spriteWidth + (float) 0.4, charY + (float) 0.5));
+            weaponBodyDef.position.set(new Vector2(charX + (float) spriteWidth + (float) 0.1, charY + (float) 0.5));
         }
         else
-            weaponBodyDef.position.set(new Vector2(charX - (float) 0.4, charY + (float) spriteHeight/2));
+            weaponBodyDef.position.set(new Vector2(charX - (float) 0.1, charY + (float) spriteHeight/2));
 
         weaponBody = world.createBody(weaponBodyDef);
         weaponBody.setGravityScale(0);
@@ -135,21 +149,15 @@ public class WeaponManager {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = weaponShape;
         fixtureDef.density = 1f;
-        fixtureDef.friction = 1f;
-        fixtureDef.restitution = 0.6f; // Make it bounce a little bit
+        fixtureDef.friction = 0f;
+        fixtureDef.restitution = 1f; // Make it bounce a little bit
         bulletAngle = (float) Math.atan2(pointerY - weaponBody.getPosition().y, pointerX - weaponBody.getPosition().x);
+        bulletVector = new Vector2((float) (pointerX - weaponBody.getPosition().x) + dogeBody.getLinearVelocity().x, (float) (pointerY - weaponBody.getPosition().y));
+        bulletVectorNormalized = bulletVector.nor();
         weaponFixture = weaponBody.createFixture(fixtureDef);
         weaponShape.dispose();
 
-        weaponBody.setLinearVelocity((float) (pointerX - weaponBody.getPosition().x + dogeBody.getLinearVelocity().x), (float) (pointerY - weaponBody.getPosition().y) + dogeBody.getLinearVelocity().y);
+        weaponBody.setLinearVelocity((bulletVectorNormalized.x * 7), bulletVectorNormalized.y * 7);
         weaponBody.setTransform(weaponBody.getPosition().x, weaponBody.getPosition().y, bulletAngle);
-    }
-
-    public void MissileExplode(World world, float missileX, float missileY, Body missileBody){
-        Game.destroyList.add(missileBody);
-        //Game.weaponDestroyList.add(missileBody);
-
-
-        destroy = true;
     }
 }

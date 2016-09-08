@@ -24,8 +24,11 @@ public class EnemyComponent implements Component
     private ArrayList<WeaponManager> weapons;
     private boolean canJump;
     public int health;
+    public int SpawnTrigger;
+    public boolean Triggered;
+    public boolean PlayerSpotted;
 
-    public void setEnemy(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Sprite s, ArrayList<WeaponManager> weapons, Fixture leftSensor, Fixture rightSensor, boolean canJump, int hp)
+    public void setEnemy(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Sprite s, ArrayList<WeaponManager> weapons, Fixture leftSensor, Fixture rightSensor, boolean canJump, int hp, int spawnTrigger)
     {
         sprite = s;
         moveLeft = left;
@@ -38,5 +41,10 @@ public class EnemyComponent implements Component
         RightSensor = rightSensor;
         this.canJump = canJump;
         health = hp;
+        SpawnTrigger = spawnTrigger;
+        if(SpawnTrigger == 0)
+        {
+            Triggered = true;
+        }
     }
 }

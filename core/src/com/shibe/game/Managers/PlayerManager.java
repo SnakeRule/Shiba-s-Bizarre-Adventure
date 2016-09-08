@@ -18,8 +18,8 @@ class PlayerManager extends CharacterManager {
     private Entity playerEntity = new Entity();
     private PlayerComponent playerComponent = new PlayerComponent();
 
-    public PlayerManager(World world, RectangleMapObject rect, TiledMap map) {
-        super(world, rect, map);
+    public PlayerManager(World world, Float SpawnX, float SpawnY) {
+        super(world, SpawnX, SpawnY);
 
         positionComponent = new PositionComponent();
         positionComponent.setX(dogeBody.getPosition().x);
@@ -36,7 +36,12 @@ class PlayerManager extends CharacterManager {
         e.add(physicsComponent);
 
         feetFixture.setUserData("PlayerFeet");
-        fixture.setUserData("PlayerManager");
+
+        Filter filter = new Filter();
+        filter.categoryBits = CollisionFilterManager.PLAYER;
+        fixture.setFilterData(filter);
+
+        fixture.setUserData("Player");
         dogeBody.setUserData(e);
 
         playerComponent.setPlayer(moveLeft,moveRight,Jump, dogeBody, feetFixture, fixture, dogeSprite, weapons, canJump, dogeImage1, dogeImage2, dogeImage3);

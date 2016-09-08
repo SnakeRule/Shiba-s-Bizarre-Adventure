@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.shibe.game.Components.SpawnComponent;
 import com.shibe.game.Components.WorldComponent;
 
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ class Level
             if(object.getName().equals("StartPoint"))
             {
                 shape = getRectangle((RectangleMapObject)object);
-                player = new PlayerManager(world.world, (RectangleMapObject)object, map);
+                player = new PlayerManager(world.world, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y);
                 SpawnX = ((RectangleMapObject) object).getRectangle().x;
                 SpawnY = ((RectangleMapObject) object).getRectangle().y;
 
@@ -119,8 +120,36 @@ class Level
             else if(object.getName().equals("EnemySpawn"))
             {
                 shape = getRectangle((RectangleMapObject)object);
-                enemy = new EnemyManager(world.world, (RectangleMapObject)object, map);
-                enemies.add(enemy);
+                int spawnLink =Integer.parseInt(object.getProperties().get("SpawnTriggerLink").toString());
+                int spawnType =Integer.parseInt(object.getProperties().get("EnemyType").toString());
+                if(spawnLink == 0) {
+                    enemy = new EnemyManager(world.world, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y);
+                }
+                else
+                {
+                    SpawnComponent spawnComponent = new SpawnComponent();
+                    spawnComponent.setSpawn(spawnType, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y, spawnLink);
+                    Entity e = new Entity();
+                    e.add(spawnComponent);
+                    engine.addEntity(e);
+                }
+
+                shape.dispose();
+            }
+            if(object.getName().equals("EnemySpawnTrigger"))
+            {
+                shape = getRectangle((RectangleMapObject)object);
+                BodyDef bd = new BodyDef();
+                bd.type = BodyDef.BodyType.StaticBody;
+                Body body = world.world.createBody(bd);
+                Fixture fixture = body.createFixture(shape, 1);
+                fixture.setSensor(true);
+                fixture.setUserData(Integer.parseInt(object.getProperties().get("SpawnTriggerLink").toString()));
+                Filter filter = new Filter();
+                filter.categoryBits = CollisionFilterManager.ENEMY_SENSOR;
+                filter.maskBits =(short) (~CollisionFilterManager.NONE & CollisionFilterManager.PLAYER);
+                fixture.setFilterData(filter);
+                body.setUserData("SpawnTrigger");
 
                 shape.dispose();
             }

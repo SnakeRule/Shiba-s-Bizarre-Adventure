@@ -45,6 +45,11 @@ public class PlayerSystem extends EntitySystem
         Entity entity = players.get(0);
         PlayerComponent player = pm.get(entity);
 
+        if(player.sprite.getY() < 0)
+        {
+            player.body.setTransform(player.SpawnPoint, player.body.getAngle());
+        }
+
         if(player.feetCollisions > 0)
             player.canJump = true;
         else
@@ -74,6 +79,10 @@ public class PlayerSystem extends EntitySystem
             player.body.setLinearVelocity(player.body.getLinearVelocity().x, 6);
         else if (player.TouchingLadder && ActionProcessor.JUMP)
             player.body.setLinearVelocity(player.body.getLinearVelocity().x, 4);
+        else if(!ActionProcessor.JUMP && !player.canJump && player.body.getLinearVelocity().y > 0)
+        {
+            player.body.setLinearVelocity(player.body.getLinearVelocity().x, (float) (player.body.getLinearVelocity().y / 1.5));
+        }
 
         if(ActionProcessor.DOWN && player.TouchingLadder)
             player.body.setLinearVelocity(player.body.getLinearVelocity().x, -4);
@@ -90,7 +99,7 @@ public class PlayerSystem extends EntitySystem
 
             if(ActionProcessor.WeaponNmb == 1) {
                 if(ballTimer >= 15) {
-                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body, player);
+                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + cursor.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body);
                     ballTimer = 0;
                 }
                 ballTimer++;
@@ -99,14 +108,14 @@ public class PlayerSystem extends EntitySystem
             {
                 if(missileTimer >= 25)
                 {
-                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body, player);
+                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + cursor.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), ActionProcessor.WeaponNmb, player.body);
                     missileTimer = 0;
                 }
                 missileTimer++;
             }
             if(ActionProcessor.WeaponNmb == 3) {
                 if(ballTimer >= 1) {
-                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), 1, player.body, player);
+                    Shoot(world.world, player.sprite.getX(), player.sprite.getY(), (cursor.sprite.getX() + player.sprite.getWidth() / 2), cursor.sprite.getY() + cursor.sprite.getHeight() / 2, player.sprite.isFlipX(), player.sprite.getWidth(), player.sprite.getHeight(), 1, player.body);
                     ballTimer = 0;
                 }
                 ballTimer++;
@@ -124,9 +133,9 @@ public class PlayerSystem extends EntitySystem
             super.update(deltaTime);
     }
 
-    private void Shoot(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double width, double height, int weaponNmb, Body dogeBody, PlayerComponent player)
+    private void Shoot(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double width, double height, int weaponNmb, Body dogeBody)
     {
-        weapon = new WeaponManager(world, charX, charY, pointerX, pointerY, flipX, width, height, weaponNmb, dogeBody, "PlayerManager");
+        weapon = new WeaponManager(world, charX, charY, pointerX, pointerY, flipX, width, height, weaponNmb, dogeBody, "Player");
     }
 
     private void Animate()

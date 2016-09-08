@@ -30,7 +30,6 @@ public class MovementSystem extends EntitySystem
 
     public void update(float deltaTime) {
 
-
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
             PositionComponent position = pm.get(entity);

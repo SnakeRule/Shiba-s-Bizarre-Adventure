@@ -2,8 +2,10 @@ package com.shibe.game.Systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.shibe.game.Components.*;
+import com.shibe.game.Managers.EnemyManager;
 
 import java.util.ArrayList;
 
@@ -21,6 +23,9 @@ public class CollisionManager implements ContactListener
     private ComponentMapper<EnemyComponent> em = ComponentMapper.getFor(EnemyComponent.class);
     private ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
     private ComponentMapper<WeaponComponent> we = ComponentMapper.getFor(WeaponComponent.class);
+    private ComponentMapper<SpawnComponent> sm = ComponentMapper.getFor(SpawnComponent.class);
+    ImmutableArray<Entity> spawns;
+    EnemyManager enemy;
     ImmutableArray<Entity> players;
     ImmutableArray<Entity> enemies;
     Entity collideeA = new Entity();
@@ -39,6 +44,7 @@ public class CollisionManager implements ContactListener
             this.world = world.world;
             world.world.setContactListener(this);
         }
+        spawns = engine.getEntitiesFor(Family.all(SpawnComponent.class).get());
     }
 
     private void CreateCollision(int type, Fixture a, Fixture b)
@@ -47,7 +53,7 @@ public class CollisionManager implements ContactListener
         {
             case 1:
             {
-                if(a.getUserData() == "PlayerManager") {
+                if(a.getUserData() == "Player") {
                     PlayerComponent player = pm.get((Entity) a.getBody().getUserData());
                     //player.body.applyForceToCenter(player.body.getLinearVelocity().x*-100, player.body.getLinearVelocity().y*-100, true);
                 }
@@ -100,8 +106,9 @@ public class CollisionManager implements ContactListener
             {
                 EnemyComponent enemy = em.get((Entity) b.getBody().getUserData());
                 WeaponComponent weapon = we.get((Entity) a.getBody().getUserData());
-                if(weapon.Owner == "PlayerManager" && weapon.type != 1) {
+                if(weapon.Owner == "Player" && weapon.type != 1) {
                     enemy.health -= weapon.Damage;
+                    enemy.body.applyForceToCenter(weapon.body.getLinearVelocity().x, weapon.body.getLinearVelocity().y, true);
                     weapon.Delete = true;
                 }
                 break;
@@ -111,6 +118,7 @@ public class CollisionManager implements ContactListener
                 EnemyComponent enemy = em.get((Entity) a.getBody().getUserData());
                 PlayerComponent player = pm.get((Entity) b.getBody().getUserData());
                 enemy.moveLeft = true;
+                enemy.PlayerSpotted = true;
                 break;
             }
             case 7:
@@ -118,6 +126,7 @@ public class CollisionManager implements ContactListener
                 EnemyComponent enemy = em.get((Entity) a.getBody().getUserData());
                 PlayerComponent player = pm.get((Entity) b.getBody().getUserData());
                 enemy.moveRight = true;
+                enemy.PlayerSpotted = true;
                 break;
             }
             case 8:
@@ -150,15 +159,33 @@ public class CollisionManager implements ContactListener
                     if(weapon.type != 1)
                         weapon.Delete = true;
                 }
+                break;
+            }
+            case 10:
+            {
+                int spawntriggerLink = Integer.parseInt(b.getUserData().toString());
+                for(int i = 0; i < spawns.size(); i++)
+                {
+                    Entity e;
+                    e = spawns.get(i);
+                    SpawnComponent spawn = sm.get(e);
+
+                    if(spawn.spawnLink == spawntriggerLink)
+                    {
+                        spawn.spawn = true;
+                    }
+                }
+                DestroySystem.BodyDestroyList.add(b.getBody());
+                break;
             }
         }
     }
 
     @Override
     public void beginContact(Contact contact) {
-        if(contact.getFixtureA().getUserData() == "PlayerManager" && contact.getFixtureA().isSensor() == false)
+        if(contact.getFixtureA().getUserData() == "Player" && contact.getFixtureA().isSensor() == false)
         {
-            if(contact.getFixtureB().getUserData() == "EnemyManager" && contact.getFixtureB().isSensor() == false)
+            if(contact.getFixtureB().getUserData() == "Enemy" && contact.getFixtureB().isSensor() == false)
                 CreateCollision(1, contact.getFixtureA(), contact.getFixtureB());
         }
         else if(contact.getFixtureA().getUserData() == "PlayerFeet" || contact.getFixtureB().getUserData() == "PlayerFeet")
@@ -169,35 +196,35 @@ public class CollisionManager implements ContactListener
         {
             CreateCollision(3, contact.getFixtureA(), contact.getFixtureB());
         }
-        if(contact.getFixtureA().getUserData() == "PlayerManager" && contact.getFixtureB().getUserData() == "Ladder")
+        if(contact.getFixtureA().getUserData() == "Player" && contact.getFixtureB().getUserData() == "Ladder")
         {
             CreateCollision(4, contact.getFixtureA(),contact.getFixtureB());
         }
-        else if(contact.getFixtureB().getUserData() == "PlayerManager" && contact.getFixtureA().getUserData() == "Ladder")
+        else if(contact.getFixtureB().getUserData() == "Player" && contact.getFixtureA().getUserData() == "Ladder")
         {
             CreateCollision(4, contact.getFixtureB(),contact.getFixtureA());
         }
-        if(contact.getFixtureA().getUserData() == "Weapon" && contact.getFixtureB().getUserData() == "EnemyManager")
+        if(contact.getFixtureA().getUserData() == "Weapon" && contact.getFixtureB().getUserData() == "Enemy")
         {
             CreateCollision(5, contact.getFixtureA(), contact.getFixtureB());
         }
-        else if(contact.getFixtureB().getUserData() == "Weapon" && contact.getFixtureA().getUserData() == "EnemyManager")
+        else if(contact.getFixtureB().getUserData() == "Weapon" && contact.getFixtureA().getUserData() == "Enemy")
         {
             CreateCollision(5, contact.getFixtureB(), contact.getFixtureA());
         }
-        if(contact.getFixtureA().getUserData() == "Left" && contact.getFixtureB().getUserData() == "PlayerManager")
+        if(contact.getFixtureA().getUserData() == "Left" && contact.getFixtureB().getUserData() == "Player")
         {
             CreateCollision(6, contact.getFixtureA(), contact.getFixtureB());
         }
-        else if(contact.getFixtureB().getUserData() == "Left" && contact.getFixtureA().getUserData() == "PlayerManager")
+        else if(contact.getFixtureB().getUserData() == "Left" && contact.getFixtureA().getUserData() == "Player")
         {
             CreateCollision(6, contact.getFixtureB(), contact.getFixtureA());
         }
-        if(contact.getFixtureA().getUserData() == "Right" && contact.getFixtureB().getUserData() == "PlayerManager")
+        if(contact.getFixtureA().getUserData() == "Right" && contact.getFixtureB().getUserData() == "Player")
         {
             CreateCollision(7, contact.getFixtureA(), contact.getFixtureB());
         }
-        else if(contact.getFixtureB().getUserData() == "Right" && contact.getFixtureA().getUserData() == "PlayerManager")
+        else if(contact.getFixtureB().getUserData() == "Right" && contact.getFixtureA().getUserData() == "Player")
         {
             CreateCollision(7, contact.getFixtureB(), contact.getFixtureA());
         }
@@ -208,6 +235,14 @@ public class CollisionManager implements ContactListener
         if(contact.getFixtureA().getUserData() == "Weapon" && contact.getFixtureB().getUserData() == "Weapon")
         {
             CreateCollision(9, contact.getFixtureA(),contact.getFixtureB());
+        }
+        if(contact.getFixtureA().getUserData() == "Player" && contact.getFixtureB().getBody().getUserData() == "SpawnTrigger")
+        {
+            CreateCollision(10, contact.getFixtureA(), contact.getFixtureB());
+        }
+        if(contact.getFixtureB().getUserData() == "Player" && contact.getFixtureA().getBody().getUserData() == "SpawnTrigger")
+        {
+            CreateCollision(10, contact.getFixtureB(), contact.getFixtureA());
         }
     }
 
@@ -224,35 +259,39 @@ public class CollisionManager implements ContactListener
             player.feetCollisions --;
         }
 
-        if(contact.getFixtureA().getUserData() == "PlayerManager" && contact.getFixtureB().getUserData() == "Ladder")
+        if(contact.getFixtureA().getUserData() == "Player" && contact.getFixtureB().getUserData() == "Ladder")
         {
             PlayerComponent player = pm.get((Entity) contact.getFixtureA().getBody().getUserData());
             player.TouchingLadder = false;
         }
-        else if(contact.getFixtureB().getUserData() == "PlayerManager" && contact.getFixtureA().getUserData() == "Ladder")
+        else if(contact.getFixtureB().getUserData() == "Player" && contact.getFixtureA().getUserData() == "Ladder")
         {
             PlayerComponent player = pm.get((Entity) contact.getFixtureB().getBody().getUserData());
             player.TouchingLadder = false;
         }
-        if(contact.getFixtureA().getUserData() == "Left" && contact.getFixtureB().getUserData() == "PlayerManager")
+        if(contact.getFixtureA().getUserData() == "Left" && contact.getFixtureB().getUserData() == "Player")
         {
             EnemyComponent enemy = em.get((Entity) contact.getFixtureA().getBody().getUserData());
             enemy.moveLeft = false;
+            enemy.PlayerSpotted = false;
         }
-        else if(contact.getFixtureB().getUserData() == "Left" && contact.getFixtureA().getUserData() == "PlayerManager")
+        else if(contact.getFixtureB().getUserData() == "Left" && contact.getFixtureA().getUserData() == "Player")
         {
             EnemyComponent enemy = em.get((Entity) contact.getFixtureB().getBody().getUserData());
             enemy.moveLeft = false;
+            enemy.PlayerSpotted = false;
         }
-        if(contact.getFixtureA().getUserData() == "Right" && contact.getFixtureB().getUserData() == "PlayerManager")
+        if(contact.getFixtureA().getUserData() == "Right" && contact.getFixtureB().getUserData() == "Player")
         {
             EnemyComponent enemy = em.get((Entity) contact.getFixtureA().getBody().getUserData());
             enemy.moveRight = false;
+            enemy.PlayerSpotted = false;
         }
-        else if(contact.getFixtureB().getUserData() == "Right" && contact.getFixtureA().getUserData() == "PlayerManager")
+        else if(contact.getFixtureB().getUserData() == "Right" && contact.getFixtureA().getUserData() == "Player")
         {
             EnemyComponent enemy = em.get((Entity) contact.getFixtureB().getBody().getUserData());
             enemy.moveRight = false;
+            enemy.PlayerSpotted = false;
         }
     }
 

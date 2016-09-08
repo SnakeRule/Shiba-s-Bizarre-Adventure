@@ -2,11 +2,13 @@ package com.shibe.game.Managers;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -46,7 +48,7 @@ public class Game extends ApplicationAdapter {
     private World world;
     public static ArrayList<Entity> entities = new ArrayList<Entity>();
     private PhoneOverlay phoneOverlay;
-    public static Engine engine = new Engine();
+    public static PooledEngine engine = new PooledEngine();
     public static boolean pause = false;
     private FPSLogger fpsLogger = new FPSLogger();
 
@@ -58,6 +60,7 @@ public class Game extends ApplicationAdapter {
     private DestroySystem destroySystem = new DestroySystem();
     private EnemySystem enemySystem = new EnemySystem();
     private WeaponSystem weaponSystem = new WeaponSystem();
+    private SpawnSystem spawnSystem = new SpawnSystem();
 
     private RenderComponent renderComponent = new RenderComponent();
     private WorldComponent worldComponent = new WorldComponent();
@@ -101,6 +104,8 @@ public class Game extends ApplicationAdapter {
         screenCoordinates = new Vector3(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
         Gdx.input.setInputProcessor(new ActionProcessor());
 
+        CollisionFilterManager filterManager = new CollisionFilterManager();
+
         new WorldManager(engine);
 
         level = new Level();
@@ -119,6 +124,7 @@ public class Game extends ApplicationAdapter {
         new CollisionManager(engine);
 
         engine.addSystem(objectSystem);
+        engine.addSystem(spawnSystem);
         engine.addSystem(playerSystem);
         engine.addSystem(enemySystem);
         engine.addSystem(weaponSystem);

@@ -50,9 +50,8 @@ class CharacterManager
     Entity e = new Entity();
 
 
-    CharacterManager(World world, RectangleMapObject rect, TiledMap map)
+    CharacterManager(World world, float SpawnX, float SpawnY)
     {
-        mapData = map;
         dogeImage1 = new Texture("SHIBA1.png");
         dogeImage2 = new Texture("SHIBA2.png");
         dogeImage3 = new Texture("SHIBA3.png");
@@ -65,7 +64,7 @@ class CharacterManager
         dogeBodyDef.fixedRotation = true;
         // set its position
 
-        dogeBodyDef.position.set(new Vector2(rect.getRectangle().getX()* Game.WORLD_TO_BOX, rect.getRectangle().getY()* Game.WORLD_TO_BOX));
+        dogeBodyDef.position.set(new Vector2(SpawnX* Game.WORLD_TO_BOX, SpawnY* Game.WORLD_TO_BOX));
 
         dogeBody = world.createBody(dogeBodyDef);
 
@@ -77,8 +76,6 @@ class CharacterManager
         fixtureDef.shape = dogeBox;
         fixtureDef.density = (float) 1.5;
         fixtureDef.friction = (float) 0;
-        fixtureDef.filter.categoryBits = 0x0008;
-        fixtureDef.filter.maskBits = 0x000f;
 
         //Create fixture
         fixture = dogeBody.createFixture(fixtureDef);
@@ -92,8 +89,8 @@ class CharacterManager
         feetFixtureDef.isSensor = true;
         feetFixtureDef.friction = (float) 1;
         feetFixtureDef.shape = dogeFeetBox;
-        feetFixtureDef.filter.categoryBits = 0x0001;
-        feetFixtureDef.filter.maskBits = 0x000f & ~0x0002;
+        feetFixtureDef.filter.categoryBits = CollisionFilterManager.CHARACTER_FEET;
+        feetFixtureDef.filter.maskBits = (short) (0x0000f & ~CollisionFilterManager.NON_COLLIDE_PROJECTILE & ~CollisionFilterManager.ENEMY_SENSOR);
 
         feetFixture = dogeBody.createFixture(feetFixtureDef);
         feetFixture.setUserData("Feet");

@@ -48,7 +48,7 @@ public class InteractableObjectManager
                 rect = (RectangleMapObject) object;
                 objectImage = new Texture("Door.png");
                 objectname = object.getName();
-                Nmb = object.getProperties().get("Link").toString();
+                Nmb =object.getProperties().get("Link").toString();
                 objectSprite = new Sprite(objectImage);
                 objectSprite.setSize(rect.getRectangle().getWidth() * Game.WORLD_TO_BOX, rect.getRectangle().getHeight() * Game.WORLD_TO_BOX);
 
@@ -112,13 +112,13 @@ public class InteractableObjectManager
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
             fixtureDef.isSensor = true;
-            fixtureDef.filter.categoryBits = 0x0002;
             Fixture fixture = objectBody.createFixture(fixtureDef);
             fixture.setUserData("Ladder");
             objectBody.setUserData(objectname);
 
             shape.dispose();
         }
+
         if(objectSprite != null) {
             spriteComponent.setSprite(objectSprite);
             e.add(spriteComponent);
@@ -145,37 +145,4 @@ public class InteractableObjectManager
 
         Game.engine.addEntity(e);
     }
-
-    public void DoorMove(final Body body, Sprite buttonSprite, TextureRegion buttonRegion) {
-            if (doorUp == false && Moving == false) {
-                body.setLinearVelocity(0, 10);
-                buttonRegion.setRegion(buttonRegion.getRegionWidth(),0,buttonRegion.getRegionWidth(),buttonRegion.getRegionHeight());
-                buttonSprite.setRegion(buttonRegion);
-                Moving = true;
-                Timer.schedule(new Timer.Task() {
-
-                    @Override
-                    public void run() {
-                        body.setLinearVelocity(0, 0);
-                        doorUp = true;
-                        Moving = false;
-                    }
-                }, (float) 0.3);
-            } else if (doorUp == true && Moving == false) {
-                Moving = true;
-                body.setLinearVelocity(0, -10);
-                buttonRegion.setRegion(0,0,buttonRegion.getRegionWidth(),buttonRegion.getRegionHeight());
-                buttonSprite.setRegion(buttonRegion);
-                Timer.schedule(new Timer.Task() {
-
-                    @Override
-                    public void run() {
-                        body.setLinearVelocity(0, 0);
-                        doorUp = false;
-                        Moving = false;
-                    }
-                }, (float) 0.3);
-            }
-        }
-
-    }
+}
