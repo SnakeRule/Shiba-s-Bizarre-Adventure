@@ -2,7 +2,6 @@ package com.shibe.game.Systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.Components.ObjectComponent;
 
 /**
@@ -11,8 +10,6 @@ import com.shibe.game.Components.ObjectComponent;
 public class ObjectSystem extends EntitySystem {
     private ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
     private ImmutableArray<Entity> objects;
-    private ImmutableArray<Entity> doorObjects;
-    ObjectComponent doorObject;
 
     public ObjectSystem() {
 
@@ -23,7 +20,6 @@ public class ObjectSystem extends EntitySystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         objects = engine.getEntitiesFor(Family.all(ObjectComponent.class).get());
-        doorObjects = engine.getEntitiesFor(Family.all(ObjectComponent.class).get());
     }
 
     @Override
@@ -58,11 +54,11 @@ public class ObjectSystem extends EntitySystem {
             Entity entity = objects.get(i);
             final ObjectComponent object = om.get(entity);
 
-            if(object.objectName.equals("Door") == true && object.Nmb.equals(Nmb.toString()) == true && object.DoorOpen == false)
+            if(object.objectName.equals("Door") == true && object.Nmb.equals(Nmb) == true && object.DoorOpen == false)
             {
                 object.body.setLinearVelocity(0,10);
             }
-            if(object.objectName.equals("Door") == true && object.Nmb.equals(Nmb.toString()) == true && object.DoorOpen == true)
+            if(object.objectName.equals("Door") == true && object.Nmb.equals(Nmb) == true && object.DoorOpen == true)
             {
                 object.body.setLinearVelocity(0,-10);
             }

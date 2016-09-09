@@ -26,32 +26,21 @@ import java.util.ArrayList;
  */
 class Level
 {
-    private Texture bg;
     private float ppt = Game.WORLD_TO_BOX;
-    private Sprite bgSprite;
-    private String objectName;
-    private TiledMap map;
     private Array<Shape> shapes;
     public ArrayList<Object> objects;
     private Object object;
-    private EnemyManager enemy;
     private ArrayList<EnemyManager> enemies = new ArrayList<EnemyManager>();
-    private float SpawnX;
-    private float SpawnY;
     private ArrayList<InteractableObjectManager> interactableObjects = new ArrayList<InteractableObjectManager>();
-    private InteractableObjectManager interactableObject;
     String LevelData;
-    private PlayerManager player;
     private Shape shape;
     private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
-    private ImmutableArray<Entity> worlds;
-    private Entity e = new Entity();
 
     public TiledMap BuildLevel(World world)
     {
-        map = new TmxMapLoader().load("Level1.tmx");
-        bg = new Texture("BackGround.jpg");
-        bgSprite = new Sprite(bg);
+        TiledMap map = new TmxMapLoader().load("Level1.tmx");
+        Texture bg = new Texture("BackGround.jpg");
+        Sprite bgSprite = new Sprite(bg);
         return map;
     }
 
@@ -59,9 +48,9 @@ class Level
     {
         MapObjects objects = new MapObjects();
         objects = map.getLayers().get("Obstacles").getObjects();
-        worlds = engine.getEntitiesFor(Family.all(WorldComponent.class).get());
-        e = worlds.get(0);
-        WorldComponent world = wm.get(e);
+        ImmutableArray<Entity> worlds = engine.getEntitiesFor(Family.all(WorldComponent.class).get());
+        Entity e1 = worlds.get(0);
+        WorldComponent world = wm.get(e1);
 
         for (MapObject object:objects)
         {
@@ -96,13 +85,13 @@ class Level
         objects = map.getLayers().get("Objects").getObjects();
         for(MapObject object:objects)
         {
-            objectName = object.getName();
+            String objectName = object.getName();
             if(object.getName().equals("StartPoint"))
             {
                 shape = getRectangle((RectangleMapObject)object);
-                player = new PlayerManager(world.world, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y);
-                SpawnX = ((RectangleMapObject) object).getRectangle().x;
-                SpawnY = ((RectangleMapObject) object).getRectangle().y;
+                PlayerManager player = new PlayerManager(world.world, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y);
+                float spawnX = ((RectangleMapObject) object).getRectangle().x;
+                float spawnY = ((RectangleMapObject) object).getRectangle().y;
 
                 shape.dispose();
             }
@@ -123,7 +112,7 @@ class Level
                 int spawnLink =Integer.parseInt(object.getProperties().get("SpawnTriggerLink").toString());
                 int spawnType =Integer.parseInt(object.getProperties().get("EnemyType").toString());
                 if(spawnLink == 0) {
-                    enemy = new EnemyManager(world.world, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y);
+                    EnemyManager enemy = new EnemyManager(world.world, ((RectangleMapObject) object).getRectangle().x, ((RectangleMapObject) object).getRectangle().y);
                 }
                 else
                 {
@@ -158,6 +147,7 @@ class Level
         objects = map.getLayers().get("MovingObjects").getObjects();
         for(MapObject object:objects)
         {
+            InteractableObjectManager interactableObject;
             if(object.getName().equals("Door"))
             {
                 shape = getRectangle((RectangleMapObject) object);

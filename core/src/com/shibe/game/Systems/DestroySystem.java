@@ -17,12 +17,8 @@ public class DestroySystem extends EntitySystem {
 
     public static ArrayList<Body> BodyDestroyList = new ArrayList<Body>();
     public static ArrayList<Entity> EntityDestroyList = new ArrayList<Entity>();
-    private ComponentMapper<PlayerComponent> pm = ComponentMapper.getFor(PlayerComponent.class);
-    private ImmutableArray<Entity> players;
     private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
     private ImmutableArray<Entity> worlds;
-    private ComponentMapper<WeaponComponent> we = ComponentMapper.getFor(WeaponComponent.class);
-    private ImmutableArray<Entity> weapons;
 
     public DestroySystem() {
         super();
@@ -31,15 +27,11 @@ public class DestroySystem extends EntitySystem {
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        players = engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
         worlds = engine.getEntitiesFor(Family.all(WorldComponent.class).get());
-        weapons = engine.getEntitiesFor(Family.all(WeaponComponent.class).get());
     }
 
     @Override
     public void update(float deltaTime) {
-        Entity e = players.get(0);
-        PlayerComponent player = pm.get(e);
         Entity w = worlds.get(0);
         WorldComponent world = wm.get(w);
 
@@ -55,12 +47,7 @@ public class DestroySystem extends EntitySystem {
             {
                 engine.removeEntity(entity);
             }
-        }
-
-        if (player.weapons.size() > 10) {
-            Game.engine.removeEntity(player.weapons.get(0).e);
-            world.world.destroyBody(player.weapons.get(0).weaponBody);
-            player.weapons.remove(0);
+            EntityDestroyList.clear();
         }
         BodyDestroyList.clear();
         super.update(deltaTime);

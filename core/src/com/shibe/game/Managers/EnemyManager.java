@@ -1,8 +1,5 @@
 package com.shibe.game.Managers;
 
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.shibe.game.Components.EnemyComponent;
@@ -17,10 +14,7 @@ public class EnemyManager extends CharacterManager
     private boolean Left;
     private boolean Right;
     private boolean Jump;
-    private int health;
     private int enemyType;
-    private int spawnTrigger;
-    private EnemyComponent enemyComponent;
 
     public EnemyManager(World world, float SpawnX, float SpawnY) {
         super(world, SpawnX, SpawnY);
@@ -29,7 +23,7 @@ public class EnemyManager extends CharacterManager
 
     private void CreateDog(World world, float SpawnX, float SpawnY)
     {
-        health = 100;
+        int health = 100;
 
         positionComponent.setX(dogeBody.getPosition().x);
         positionComponent.setY(dogeBody.getPosition().y);
@@ -76,8 +70,8 @@ public class EnemyManager extends CharacterManager
         fixture.setUserData("Enemy");
         dogeBody.setUserData(e);
 
-        enemyComponent = new EnemyComponent();
-        enemyComponent.setEnemy(Left,Right, Jump, dogeBody, feetFixture, dogeSprite, weapons, RearFixture, Frontfixture, canJump, health, spawnTrigger);
+        EnemyComponent enemyComponent = new EnemyComponent();
+        enemyComponent.setEnemy(Left,Right, Jump, dogeBody, feetFixture, dogeSprite, RearFixture, Frontfixture, canJump, health);
         e.add(enemyComponent);
 
         Game.engine.addEntity(e);

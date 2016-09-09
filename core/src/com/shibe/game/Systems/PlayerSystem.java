@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.Managers.ActionProcessor;
 import com.shibe.game.Components.CursorComponent;
 import com.shibe.game.Components.PlayerComponent;
@@ -18,7 +17,6 @@ public class PlayerSystem extends EntitySystem
 {
     private Body body;
     private PlayerComponent player;
-    private WeaponManager weapon;
     private ImmutableArray<Entity> players;
     private ImmutableArray<Entity> worlds;
     private ImmutableArray<Entity> cursors;
@@ -50,10 +48,7 @@ public class PlayerSystem extends EntitySystem
             player.body.setTransform(player.SpawnPoint, player.body.getAngle());
         }
 
-        if(player.feetCollisions > 0)
-            player.canJump = true;
-        else
-            player.canJump = false;
+        player.canJump = player.feetCollisions > 0;
 
         if(player.TouchingLadder == true) {
             player.body.setGravityScale(0);
@@ -135,7 +130,7 @@ public class PlayerSystem extends EntitySystem
 
     private void Shoot(World world, float charX, float charY, double pointerX, double pointerY, boolean flipX, double width, double height, int weaponNmb, Body dogeBody)
     {
-        weapon = new WeaponManager(world, charX, charY, pointerX, pointerY, flipX, width, height, weaponNmb, dogeBody, "Player");
+        WeaponManager weapon = new WeaponManager(world, charX, charY, pointerX, pointerY, flipX, width, height, weaponNmb, dogeBody, "Player");
     }
 
     private void Animate()

@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.Body;
  */
 public class ObjectComponent implements Component
 {
-    private Sprite sprite;
     public String Nmb;
     public String objectName;
     public boolean DoorOpen;
@@ -22,7 +21,7 @@ public class ObjectComponent implements Component
     }
     public void setSprite(Sprite sprite)
     {
-        this.sprite = sprite;
+        Sprite sprite1 = sprite;
     }
     public void setNmb(String nmb)
     {

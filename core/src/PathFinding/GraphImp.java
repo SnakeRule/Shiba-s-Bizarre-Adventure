@@ -9,14 +9,13 @@ import com.badlogic.gdx.utils.Array;
  */
 public class GraphImp implements IndexedGraph<Node>{
     private Array<Node> nodes = new Array<Node>();
-    private int capacity;
 
     public GraphImp(){
         super();
     }
 
     public GraphImp(int capacity){
-        this.capacity = capacity;
+        int capacity1 = capacity;
     }
 
     public GraphImp(Array<Node> nodes){

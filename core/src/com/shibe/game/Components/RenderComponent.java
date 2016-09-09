@@ -1,7 +1,6 @@
 package com.shibe.game.Components;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 

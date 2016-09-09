@@ -10,15 +10,14 @@ import com.shibe.game.Components.CameraComponent;
  */
 class CameraManager
 {
-    private OrthographicCamera camera;
-    private Entity cameraEntity = new Entity();
 
     public CameraManager(Engine engine)
     {
-        camera = new OrthographicCamera();
+        OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, 16f, 9f);
         CameraComponent cameraComponent = new CameraComponent();
         cameraComponent.setCamera(camera);
+        Entity cameraEntity = new Entity();
         cameraEntity.add(cameraComponent);
         engine.addEntity(cameraEntity);
     }

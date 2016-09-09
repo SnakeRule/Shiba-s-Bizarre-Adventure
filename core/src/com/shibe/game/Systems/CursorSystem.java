@@ -13,11 +13,8 @@ public class CursorSystem extends EntitySystem
 {
     private ComponentMapper<CursorComponent> cm = ComponentMapper.getFor(CursorComponent.class);
     private ComponentMapper<CameraComponent> cam = ComponentMapper.getFor(CameraComponent.class);
-    private ImmutableArray<Entity> cursors;
-    private ImmutableArray<Entity> cameras;
     private CursorComponent cursor;
     private CameraComponent camera;
-    private Entity e = new Entity();
 
     public CursorSystem() {
         super();
@@ -27,10 +24,10 @@ public class CursorSystem extends EntitySystem
     public void addedToEngine(Engine engine)
     {
         super.addedToEngine(engine);
-        cursors = engine.getEntitiesFor(Family.all(CursorComponent.class).get());
-        e = cursors.get(0);
+        ImmutableArray<Entity> cursors = engine.getEntitiesFor(Family.all(CursorComponent.class).get());
+        Entity e = cursors.get(0);
         cursor = cm.get(e);
-        cameras = engine.getEntitiesFor(Family.all(CameraComponent.class).get());
+        ImmutableArray<Entity> cameras = engine.getEntitiesFor(Family.all(CameraComponent.class).get());
         e = cameras.get(0);
         camera = cam.get(e);
     }

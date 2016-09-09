@@ -13,22 +13,19 @@ import com.shibe.game.Systems.CursorSystem;
  */
 class CursorManager
 {
-    private Sprite AimReticle;
-    private CursorComponent cursorComponent;
-    private SpriteComponent spriteComponent;
-    private Entity e = new Entity();
 
     public CursorManager(Engine engine)
     {
         Texture aimReticleTex = new Texture("Crosshair.png");
-        AimReticle = new Sprite(aimReticleTex);
-        AimReticle.setOrigin(0,0);
-        AimReticle.setSize((AimReticle.getWidth() / 15)* Game.WORLD_TO_BOX,(AimReticle.getHeight()/15)* Game.WORLD_TO_BOX);
+        Sprite aimReticle = new Sprite(aimReticleTex);
+        aimReticle.setOrigin(0,0);
+        aimReticle.setSize((aimReticle.getWidth() / 15)* Game.WORLD_TO_BOX,(aimReticle.getHeight()/15)* Game.WORLD_TO_BOX);
 
-        cursorComponent = new CursorComponent(AimReticle);
+        CursorComponent cursorComponent = new CursorComponent(aimReticle);
+        Entity e = new Entity();
         e.add(cursorComponent);
-        spriteComponent = new SpriteComponent();
-        spriteComponent.setSprite(AimReticle);
+        SpriteComponent spriteComponent = new SpriteComponent();
+        spriteComponent.setSprite(aimReticle);
         e.add(spriteComponent);
         engine.addEntity(e);
         CursorSystem cursorSystem = new CursorSystem();

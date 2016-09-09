@@ -15,28 +15,22 @@ import com.shibe.game.Managers.Game;
  */
 public class MenuStage
 {
-    private Skin skin;
-    private Table table;
-    private static TextButton startButton;
-    private static TextButton quitButton;
-    private static Label instructions;
-    private Stage stage;
 
     public Stage CreateStage()
     {
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("uiskin.atlas"));
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-        stage = new Stage(new ScreenViewport());
+        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Stage stage = new Stage(new ScreenViewport());
 
-        table = new Table();
+        Table table = new Table();
         table.setWidth(stage.getWidth());
         table.align(Align.center | Align.top);
 
         table.setPosition(0, Gdx.graphics.getHeight());
 
-        startButton = new TextButton("New Game", skin);
-        quitButton = new TextButton("Quit Game", skin);
-        instructions = new Label("1.Ball \n2.Missile \n3.Ultra Balls (Slows the web browser version)", skin);
+        TextButton startButton = new TextButton("New Game", skin);
+        TextButton quitButton = new TextButton("Quit Game", skin);
+        Label instructions = new Label("1.Ball \n2.Missile \n3.Ultra Balls (Slows the web browser version)", skin);
 
         table.padTop(30);
         table.add(startButton).padBottom(30);

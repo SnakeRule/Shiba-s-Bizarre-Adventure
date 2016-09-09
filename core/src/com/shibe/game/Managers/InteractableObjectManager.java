@@ -8,7 +8,6 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.Components.ObjectComponent;
 import com.shibe.game.Components.PhysicsComponent;
 import com.shibe.game.Components.PositionComponent;
@@ -20,32 +19,25 @@ import com.shibe.game.Managers.Game;
  */
 public class InteractableObjectManager
 {
-    private Texture objectImage;
-    private TextureRegion objectRegion;
     private Sprite objectSprite;
     private Body objectBody;
     private String Nmb;
-    private String objectname = "";
     private Boolean Moving = false;
     private Boolean doorUp = false;
     private int moveCounter;
-    private RectangleMapObject rect;
-    private EllipseMapObject circle;
-    private PhysicsComponent physicsComponent;
-    private PositionComponent positionComponent;
-    private SpriteComponent spriteComponent;
-    private ObjectComponent objectComponent;
 
     public InteractableObjectManager(World world, Shape shape, MapObject object)
     {
         Entity e = new Entity();
-        spriteComponent = new SpriteComponent();
-        physicsComponent = new PhysicsComponent();
-        positionComponent = new PositionComponent();
-        objectComponent = new ObjectComponent();
+        SpriteComponent spriteComponent = new SpriteComponent();
+        PhysicsComponent physicsComponent = new PhysicsComponent();
+        PositionComponent positionComponent = new PositionComponent();
+        ObjectComponent objectComponent = new ObjectComponent();
+        String objectname = "";
         {
+            Texture objectImage;
             if(object.getName().equals("Door")) {
-                rect = (RectangleMapObject) object;
+                RectangleMapObject rect = (RectangleMapObject) object;
                 objectImage = new Texture("Door.png");
                 objectname = object.getName();
                 Nmb =object.getProperties().get("Link").toString();
@@ -74,12 +66,12 @@ public class InteractableObjectManager
             if(object.getName().equals("Button"))
             {
                 Nmb = object.getProperties().get("Link").toString();
-                circle = (EllipseMapObject) object;
+                EllipseMapObject circle = (EllipseMapObject) object;
                 objectname = object.getName();
                 objectImage = new Texture("Button.png");
-                objectRegion = new TextureRegion();
+                TextureRegion objectRegion = new TextureRegion();
                 objectRegion.setTexture(objectImage);
-                objectRegion.setRegion(0,0,objectImage.getWidth()/4,objectImage.getHeight());
+                objectRegion.setRegion(0,0, objectImage.getWidth()/4, objectImage.getHeight());
                 objectSprite = new Sprite(objectRegion);
                 objectSprite.setSize((float) (objectSprite.getWidth()*1.2 * Game.WORLD_TO_BOX), (float) (objectSprite.getHeight()*1.2 * Game.WORLD_TO_BOX));
 

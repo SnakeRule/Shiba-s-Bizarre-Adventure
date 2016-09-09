@@ -11,6 +11,7 @@ public class WeaponSystem extends EntitySystem
 {
     private ComponentMapper<WeaponComponent> wm = ComponentMapper.getFor(WeaponComponent.class);
     private ImmutableArray<Entity> weapons;
+    Entity e;
 
     public WeaponSystem() {
         super();
@@ -27,7 +28,7 @@ public class WeaponSystem extends EntitySystem
         super.update(deltaTime);
         for(int i = 0; i < weapons.size(); i++)
         {
-            Entity e = weapons.get(i);
+            e = weapons.get(i);
             WeaponComponent weapon = wm.get(e);
             weapon.timer++;
 

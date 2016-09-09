@@ -14,14 +14,14 @@ import com.shibe.game.Managers.WeaponManager;
  */
 public class EnemySystem extends EntitySystem
 {
-    int timer = 20;
+    private int timer = 20;
     private ComponentMapper<EnemyComponent> em = ComponentMapper.getFor(EnemyComponent.class);
     private ComponentMapper<PlayerComponent> pm = ComponentMapper.getFor(PlayerComponent.class);
     private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
     private ImmutableArray<Entity> players;
     private ImmutableArray<Entity> worlds;
     private ImmutableArray<Entity> enemies;
-    WeaponManager weapon;
+    private WeaponManager weapon;
 
     public EnemySystem() {
         super();

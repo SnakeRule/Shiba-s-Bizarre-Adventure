@@ -12,20 +12,18 @@ import com.shibe.game.Components.WorldComponent;
  */
 class WorldManager
 {
-    private final World world;
-    private final Box2DDebugRenderer debugRenderer;
-    private final WorldComponent worldComponent = new WorldComponent();
-    private final Entity worldEntity = new Entity();
 
     public WorldManager(Engine engine)
     {
         //Box2D world creation
-        world = new World(new Vector2(0, -13), true);
+        World world = new World(new Vector2(0, -13), true);
 
         //Box2D renderer
-        debugRenderer = new Box2DDebugRenderer();
+        //Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
+        WorldComponent worldComponent = new WorldComponent();
         worldComponent.setWorld(world);
+        Entity worldEntity = new Entity();
         worldEntity.add(worldComponent);
         engine.addEntity(worldEntity);
         worldEntity.add(worldComponent);

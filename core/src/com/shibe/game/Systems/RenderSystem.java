@@ -55,7 +55,7 @@ public class RenderSystem extends EntitySystem
             sprite.sprite.draw(render.batch);
         }
         render.batch.end();
-        world.debugRenderer.render(world.world, camera.camera.combined);
-        world.world.step(1 / 60f, 6, 2);
+        //world.debugRenderer.render(world.world, camera.camera.combined);
+        world.world.step(1 / 60f, 8, 3);
     }
 }

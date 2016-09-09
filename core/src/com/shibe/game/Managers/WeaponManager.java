@@ -15,7 +15,6 @@ import com.shibe.game.Components.WeaponComponent;
  * Created by Jere on 12.8.2016.
  */
 public class WeaponManager {
-    private WeaponComponent weaponComponent = new WeaponComponent();
     private Texture weaponImage;
     private Sprite weaponSprite = new Sprite();
     private Sound dropSound;
@@ -24,9 +23,6 @@ public class WeaponManager {
     private float bulletAngle;
     private Fixture weaponFixture;
     private int damageMade;
-    private PhysicsComponent physicsComponent = new PhysicsComponent();
-    private SpriteComponent spriteComponent = new SpriteComponent();
-    private PositionComponent positionComponent = new PositionComponent();
     private Vector2 bulletVector;
     private Vector2 bulletVectorNormalized;
     public Entity e = new Entity();
@@ -44,8 +40,10 @@ public class WeaponManager {
                 break;
             }
         }
+        SpriteComponent spriteComponent = new SpriteComponent();
         spriteComponent.setSprite(weaponSprite);
         e.add(spriteComponent);
+        PositionComponent positionComponent = new PositionComponent();
         positionComponent.setX(weaponSprite.getX());
         positionComponent.setY(weaponSprite.getY());
         positionComponent.setAngle(weaponBody.getAngle());
@@ -69,8 +67,10 @@ public class WeaponManager {
         }
         weaponFixture.setUserData("Weapon");
         weaponBody.setUserData(e);
+        PhysicsComponent physicsComponent = new PhysicsComponent();
         physicsComponent.setBody(weaponBody);
         e.add(physicsComponent);
+        WeaponComponent weaponComponent = new WeaponComponent();
         weaponComponent.setType(weaponNmb);
         weaponComponent.setEntity(e);
         weaponComponent.setDamage(damageMade);

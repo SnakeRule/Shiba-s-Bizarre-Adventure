@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class WeaponComponent implements Component
 {
     public int type;
-    private Entity entity;
     public int Damage;
     public boolean Delete;
     public Body body;
@@ -23,7 +22,7 @@ public class WeaponComponent implements Component
     }
     public void setEntity(Entity e)
     {
-        entity = e;
+        Entity entity = e;
     }
     public void setDamage(int damage)
     {

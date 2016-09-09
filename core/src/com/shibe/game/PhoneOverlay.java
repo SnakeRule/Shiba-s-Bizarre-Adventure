@@ -9,17 +9,15 @@ import com.shibe.game.Managers.Game;
  */
 public class PhoneOverlay
 {
-    private Texture buttonImage;
-    private Sprite ArrowUp;
     public Sprite ArrowRight;
     public Sprite ArrowDown;
     public Sprite ArrowLeft;
 
     public PhoneOverlay()
     {
-        buttonImage = new Texture("TouchButtonUp.png");
-        ArrowUp = new Sprite(buttonImage);
-        ArrowUp.setSize(ArrowUp.getWidth()* Game.WORLD_TO_BOX, ArrowUp.getHeight()*Game.WORLD_TO_BOX);
-        ArrowUp.setPosition(100*Game.WORLD_TO_BOX, 150*Game.WORLD_TO_BOX);
+        Texture buttonImage = new Texture("TouchButtonUp.png");
+        Sprite arrowUp = new Sprite(buttonImage);
+        arrowUp.setSize(arrowUp.getWidth()* Game.WORLD_TO_BOX, arrowUp.getHeight()*Game.WORLD_TO_BOX);
+        arrowUp.setPosition(100*Game.WORLD_TO_BOX, 150*Game.WORLD_TO_BOX);
     }
 }

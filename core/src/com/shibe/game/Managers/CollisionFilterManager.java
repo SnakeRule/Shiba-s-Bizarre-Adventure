@@ -3,7 +3,7 @@ package com.shibe.game.Managers;
 /**
  * Created by Jere on 2.9.2016.
  */
-public class CollisionFilterManager
+class CollisionFilterManager
 {
     public static short NONE = 0x000f;
     public static short PLAYER = 0x0064;

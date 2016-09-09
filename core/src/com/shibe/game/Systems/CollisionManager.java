@@ -2,7 +2,6 @@ package com.shibe.game.Systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.shibe.game.Components.*;
 import com.shibe.game.Managers.EnemyManager;
@@ -15,11 +14,8 @@ import java.util.ArrayList;
  */
 public class CollisionManager implements ContactListener
 {
-    private Engine engine;
-    private World world;
 
     private ComponentMapper<PlayerComponent> pm = ComponentMapper.getFor(PlayerComponent.class);
-    private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
     private ComponentMapper<EnemyComponent> em = ComponentMapper.getFor(EnemyComponent.class);
     private ComponentMapper<ObjectComponent> om = ComponentMapper.getFor(ObjectComponent.class);
     private ComponentMapper<WeaponComponent> we = ComponentMapper.getFor(WeaponComponent.class);
@@ -36,12 +32,11 @@ public class CollisionManager implements ContactListener
 
     public CollisionManager(Engine engine) {
         super();
-        this.engine = engine;
 
         ImmutableArray<Entity> worlds = engine.getEntitiesFor(Family.all(WorldComponent.class).get());
         for(Entity entity:worlds) {
+            ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
             WorldComponent world = wm.get(entity);
-            this.world = world.world;
             world.world.setContactListener(this);
         }
         spawns = engine.getEntitiesFor(Family.all(SpawnComponent.class).get());
@@ -145,22 +140,6 @@ public class CollisionManager implements ContactListener
                 }
                 break;
             }
-            case 9:
-            {
-                if(a.getUserData() == "Weapon")
-                {
-                    WeaponComponent weapon = we.get((Entity) a.getBody().getUserData());
-                    if(weapon.type != 1)
-                        weapon.Delete = true;
-                }
-                if(b.getUserData() == "Weapon")
-                {
-                    WeaponComponent weapon = we.get((Entity) b.getBody().getUserData());
-                    if(weapon.type != 1)
-                        weapon.Delete = true;
-                }
-                break;
-            }
             case 10:
             {
                 int spawntriggerLink = Integer.parseInt(b.getUserData().toString());
@@ -231,10 +210,6 @@ public class CollisionManager implements ContactListener
         if(contact.getFixtureA().getUserData() == "Weapon" || contact.getFixtureB().getUserData() == "Weapon")
         {
             CreateCollision(8, contact.getFixtureA(),contact.getFixtureB());
-        }
-        if(contact.getFixtureA().getUserData() == "Weapon" && contact.getFixtureB().getUserData() == "Weapon")
-        {
-            CreateCollision(9, contact.getFixtureA(),contact.getFixtureB());
         }
         if(contact.getFixtureA().getUserData() == "Player" && contact.getFixtureB().getBody().getUserData() == "SpawnTrigger")
         {

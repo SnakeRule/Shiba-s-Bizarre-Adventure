@@ -3,7 +3,6 @@ package com.shibe.game.Managers;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
@@ -28,16 +27,10 @@ class CharacterManager
     Texture dogeImage2;
     Texture dogeImage3;
     public boolean TouchingLadder = false;
-    private float x;
-    private float y;
-    public TextureMapObject shibeTextureMapObject;
     Sprite dogeSprite;
-    private BodyDef dogeBodyDef;
     Body dogeBody;
     public WeaponManager weapon;
     public int footContacts = 0;
-    ArrayList<WeaponManager> weapons = new ArrayList<WeaponManager>();
-    private float size = (float) 1.6;
     protected int animationCounter;
     protected int fileno = 1;
     boolean moveLeft;
@@ -45,7 +38,6 @@ class CharacterManager
     boolean Jump;
     Fixture feetFixture;
     Fixture fixture;
-    private TiledMap mapData;
     boolean canJump;
     Entity e = new Entity();
 
@@ -56,10 +48,11 @@ class CharacterManager
         dogeImage2 = new Texture("SHIBA2.png");
         dogeImage3 = new Texture("SHIBA3.png");
         dogeSprite = new Sprite(dogeImage1);
-        dogeSprite.setSize((dogeImage1.getWidth()/size)* Game.WORLD_TO_BOX, (dogeImage1.getHeight()/size)* Game.WORLD_TO_BOX);
+        float size = (float) 1.6;
+        dogeSprite.setSize((dogeImage1.getWidth()/ size)* Game.WORLD_TO_BOX, (dogeImage1.getHeight()/ size)* Game.WORLD_TO_BOX);
 
         //Create Body
-        dogeBodyDef = new BodyDef();
+        BodyDef dogeBodyDef = new BodyDef();
         dogeBodyDef.type = BodyDef.BodyType.DynamicBody;
         dogeBodyDef.fixedRotation = true;
         // set its position

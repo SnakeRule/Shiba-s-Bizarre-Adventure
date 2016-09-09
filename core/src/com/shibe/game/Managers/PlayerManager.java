@@ -2,8 +2,6 @@ package com.shibe.game.Managers;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.physics.box2d.*;
 import com.shibe.game.Components.PhysicsComponent;
 import com.shibe.game.Components.PlayerComponent;
@@ -16,7 +14,6 @@ import com.shibe.game.Components.SpriteComponent;
 class PlayerManager extends CharacterManager {
     public Sprite AimReticle;
     private Entity playerEntity = new Entity();
-    private PlayerComponent playerComponent = new PlayerComponent();
 
     public PlayerManager(World world, Float SpawnX, float SpawnY) {
         super(world, SpawnX, SpawnY);
@@ -44,7 +41,8 @@ class PlayerManager extends CharacterManager {
         fixture.setUserData("Player");
         dogeBody.setUserData(e);
 
-        playerComponent.setPlayer(moveLeft,moveRight,Jump, dogeBody, feetFixture, fixture, dogeSprite, weapons, canJump, dogeImage1, dogeImage2, dogeImage3);
+        PlayerComponent playerComponent = new PlayerComponent();
+        playerComponent.setPlayer(moveLeft,moveRight,Jump, dogeBody, feetFixture, fixture, dogeSprite, canJump, dogeImage1, dogeImage2, dogeImage3);
         e.add(playerComponent);
 
         Game.engine.addEntity(e);

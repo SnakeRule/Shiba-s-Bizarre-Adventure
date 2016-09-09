@@ -3,7 +3,6 @@ package com.shibe.game.Systems;
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.shibe.game.Components.PhysicsComponent;
-import com.shibe.game.Components.PlayerComponent;
 import com.shibe.game.Components.PositionComponent;
 
 /**
@@ -12,12 +11,9 @@ import com.shibe.game.Components.PositionComponent;
 public class MovementSystem extends EntitySystem
 {
     private ImmutableArray<Entity> entities;
-    private ImmutableArray<Entity> players;
 
     private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
     private ComponentMapper<PhysicsComponent> pc = ComponentMapper.getFor(PhysicsComponent.class);
-    private ComponentMapper<PlayerComponent> pl = ComponentMapper.getFor(PlayerComponent.class);
-    //private ComponentMapper<VelocityComponent> vm = ComponentMapper.getFor(VelocityComponent.class);
 
     public MovementSystem() {
         super();
@@ -25,7 +21,6 @@ public class MovementSystem extends EntitySystem
 
     public void addedToEngine(Engine engine) {
         entities = engine.getEntitiesFor(Family.all(PositionComponent.class).get());
-        players = engine.getEntitiesFor(Family.all(PlayerComponent.class).get());
     }
 
     public void update(float deltaTime) {
