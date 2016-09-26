@@ -2,6 +2,7 @@ package com.shibe.game.Systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.shibe.game.Components.SpriteComponent;
 import com.shibe.game.Components.WeaponComponent;
 
 /**
@@ -10,8 +11,11 @@ import com.shibe.game.Components.WeaponComponent;
 public class WeaponSystem extends EntitySystem
 {
     private ComponentMapper<WeaponComponent> wm = ComponentMapper.getFor(WeaponComponent.class);
+    private ComponentMapper<SpriteComponent> sm = ComponentMapper.getFor(SpriteComponent.class);
     private ImmutableArray<Entity> weapons;
-    Entity e;
+    private WeaponComponent weapon;
+    private SpriteComponent sprite;
+    private Entity e;
 
     public WeaponSystem() {
         super();
@@ -20,7 +24,7 @@ public class WeaponSystem extends EntitySystem
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        weapons = engine.getEntitiesFor(Family.all(WeaponComponent.class).get());
+        weapons = engine.getEntitiesFor(Family.all(WeaponComponent.class, SpriteComponent.class).get());
     }
 
     @Override
@@ -29,16 +33,15 @@ public class WeaponSystem extends EntitySystem
         for(int i = 0; i < weapons.size(); i++)
         {
             e = weapons.get(i);
-            WeaponComponent weapon = wm.get(e);
-            weapon.timer++;
+            weapon = wm.get(e);
+            sprite = sm.get(e);
 
             if(weapon.Delete)
             {
                 DestroySystem.BodyDestroyList.add(weapon.body);
                 DestroySystem.EntityDestroyList.add(e);
+                DestroySystem.TextureDestroyList.add(sprite.sprite.getTexture());
             }
-            if(weapon.timer > 500)
-                weapon.Delete = true;
         }
 
     }

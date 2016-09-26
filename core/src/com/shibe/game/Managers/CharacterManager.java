@@ -76,7 +76,7 @@ class CharacterManager
         dogeBox.dispose();
 
         PolygonShape dogeFeetBox = new PolygonShape();
-        dogeFeetBox.setAsBox((float) (dogeSprite.getWidth() - 0.43), (float) 0.05, new Vector2(0, (float) -0.33), 0);
+        dogeFeetBox.setAsBox((float) (dogeSprite.getWidth() - 0.33), (float) 0.05, new Vector2(0, (float) -0.23), 0);
 
         FixtureDef feetFixtureDef = new FixtureDef();
         feetFixtureDef.isSensor = true;

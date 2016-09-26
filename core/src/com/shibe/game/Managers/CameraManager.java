@@ -2,22 +2,25 @@ package com.shibe.game.Managers;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.shibe.game.Components.CameraComponent;
+
+import static com.shibe.game.Managers.Game.engine;
 
 /**
  * Created by Jere on 30.8.2016.
  */
 class CameraManager
 {
+    Entity cameraEntity = new Entity();
+    CameraComponent cameraComponent = new CameraComponent();
+    OrthographicCamera camera = new OrthographicCamera();
 
-    public CameraManager(Engine engine)
+    public void initCamera()
     {
-        OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, 16f, 9f);
-        CameraComponent cameraComponent = new CameraComponent();
+        camera.setToOrtho(false, (float) (16f/1.7), (float) (9f/1.7));
         cameraComponent.setCamera(camera);
-        Entity cameraEntity = new Entity();
         cameraEntity.add(cameraComponent);
         engine.addEntity(cameraEntity);
     }

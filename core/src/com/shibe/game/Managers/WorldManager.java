@@ -7,23 +7,30 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.shibe.game.Components.WorldComponent;
 
+import static com.shibe.game.Managers.Game.engine;
+
 /**
  * Created by Jere on 30.8.2016.
  */
 class WorldManager
 {
+    World world;
+    Entity worldEntity = new Entity();
+    WorldComponent worldComponent = new WorldComponent();
 
-    public WorldManager(Engine engine)
+    public WorldManager()
     {
         //Box2D world creation
-        World world = new World(new Vector2(0, -13), true);
+        if (world == null)
+            world = new World(new Vector2(0, -13), true);
 
         //Box2D renderer
         //Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    }
 
-        WorldComponent worldComponent = new WorldComponent();
+    public void initWorld()
+    {
         worldComponent.setWorld(world);
-        Entity worldEntity = new Entity();
         worldEntity.add(worldComponent);
         engine.addEntity(worldEntity);
         worldEntity.add(worldComponent);

@@ -15,13 +15,16 @@ public class ObjectComponent implements Component
     public boolean DoorMove;
     public Body body;
     public float SpawnY;
+    public boolean TeleportReady;
+    public boolean Teleport;
+    public Sprite sprite;
 
     public ObjectComponent()
     {
     }
     public void setSprite(Sprite sprite)
     {
-        Sprite sprite1 = sprite;
+        this.sprite = sprite;
     }
     public void setNmb(String nmb)
     {

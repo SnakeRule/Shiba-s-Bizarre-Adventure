@@ -12,4 +12,5 @@ class CollisionFilterManager
     public static short ENEMY = 0x0008;
     public static short ENEMY_SENSOR = 0x0016;
     public static short CHARACTER_FEET = 0x0032;
+    public static short ITEM = 0x0256;
 }

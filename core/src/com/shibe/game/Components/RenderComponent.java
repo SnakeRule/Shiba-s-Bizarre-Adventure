@@ -9,8 +9,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
  */
 public class RenderComponent implements Component
 {
-    public OrthogonalTiledMapRenderer renderer;
-    public SpriteBatch batch;
+    public static OrthogonalTiledMapRenderer renderer;
+    public static SpriteBatch batch;
 
     public void setRenderer(OrthogonalTiledMapRenderer r){this.renderer = r;}
 

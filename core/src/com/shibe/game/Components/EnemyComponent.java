@@ -19,8 +19,10 @@ public class EnemyComponent implements Component
     public Sprite sprite;
     public int health;
     public boolean PlayerSpotted;
+    public int enemyID;
+    public float maxSpeed;
 
-    public void setEnemy(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Sprite s, Fixture leftSensor, Fixture rightSensor, boolean canJump, int hp)
+    public void setEnemy(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Sprite s, Fixture leftSensor, Fixture rightSensor, boolean canJump, int hp, int type, float maxSpeed)
     {
         sprite = s;
         moveLeft = left;
@@ -32,5 +34,7 @@ public class EnemyComponent implements Component
         Fixture rightSensor1 = rightSensor;
         boolean canJump1 = canJump;
         health = hp;
+        enemyID = type;
+        this.maxSpeed = maxSpeed;
     }
 }

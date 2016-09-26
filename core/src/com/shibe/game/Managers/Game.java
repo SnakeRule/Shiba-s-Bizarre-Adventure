@@ -6,32 +6,42 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.AndroidStage;
 import com.shibe.game.Components.RenderComponent;
 import com.shibe.game.Components.WorldComponent;
+import com.shibe.game.HudStage;
 import com.shibe.game.MenuStage;
-import com.shibe.game.PhoneOverlay;
 import com.shibe.game.Systems.*;
 
 import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
 
-    public static final float WORLD_TO_BOX = 0.01f;
+    public static final float WORLD_TO_BOX = 0.010f;
     public static final float BOX_TO_WORLD = 100f;
 
+    public static boolean AprocessorSet; // Used when switching actionprocessor from menu to game
+    private Timer goalTimer;
+    public static boolean androidDebug = false;
+    public static boolean Android;
     public static boolean Menu;
+    public static boolean Save;
+    public static boolean Load;
+    public static boolean Quit;
     private Stage stage;
     private Stage buttonStage;
-    private static boolean gameOn = false;
-    public static boolean gameInit = false;
+    public static boolean gameOn = false;
+    public static boolean gameStart = false;
     private BitmapFont font;
     public static ArrayList<Body> destroyList = new ArrayList<Body>();
     public static ArrayList<System> systems = new ArrayList<System>();
@@ -43,86 +53,130 @@ public class Game extends ApplicationAdapter {
     public static PooledEngine engine = new PooledEngine();
     public static boolean pause = false;
     private FPSLogger fpsLogger = new FPSLogger();
-
-    private MovementSystem movementSystem = new MovementSystem();
-    private DrawSystem drawSystem = new DrawSystem();
-    private PlayerSystem playerSystem = new PlayerSystem();
-    private ObjectSystem objectSystem = new ObjectSystem();
-    private DestroySystem destroySystem = new DestroySystem();
-    private EnemySystem enemySystem = new EnemySystem();
-    private WeaponSystem weaponSystem = new WeaponSystem();
-    private SpawnSystem spawnSystem = new SpawnSystem();
+    public static Vector2 ScreenCoordinates;
 
     private RenderComponent renderComponent = new RenderComponent();
     private WorldComponent worldComponent = new WorldComponent();
+
+    MovementSystem movementSystem;
+    PlayerSystem playerSystem;
+    ObjectSystem objectSystem;
+    DestroySystem destroySystem;
+    EnemySystem enemySystem;
+    WeaponSystem weaponSystem;
+    SpawnSystem spawnSystem;
+    TreasureSystem treasureSystem;
+    RenderSystem renderSystem;
+    SaveSystem saveSystem;
+
+    CollisionFilterManager filterManager = new CollisionFilterManager();
+    CameraManager cameraManager;
+    CursorManager cursorManager;
+    private WorldManager worldManager;
+    Level level;
 
     private Entity renderEntity = new Entity();
     private Entity cameraEntity = new Entity();
     private Entity worldEntity = new Entity();
     private Entity collisionEntity = new Entity();
 
+    public static boolean Goal;
+
+    MenuStage menu;
+    AndroidStage androidStage;
+    HudStage hudStage;
+    Stage hud;
+
+    public static InputMultiplexer inputMultiplexer = new InputMultiplexer();
+    SpriteBatch batch;
+
     @Override
     public void create() {
-        MenuStage menu = new MenuStage();
-        stage = menu.CreateStage();
+        ScreenCoordinates = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        Gdx.graphics.setVSync(true);
         Gdx.input.setInputProcessor(stage);
 
-        Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("BgMusic.mp3"));
+        Music bgMusic = Gdx.audio.newMusic(Gdx.files.internal("BgMusic.mp3"));
 
         switch (Gdx.app.getType()) {
             case Android:
+            {
+                Android = true;
+                androidStage = new AndroidStage();
+                Gdx.input.setCatchBackKey(true);
+            }
 
             // android specific code
             case Desktop: {
+                if(androidDebug)
+                    androidStage = new AndroidStage();
             }
             case WebGL:
                 /// HTML5 specific code
         }
 
         //Loop and playback of music
-        rainMusic.setLooping(true);
-        rainMusic.play();
+        bgMusic.setLooping(true);
+        bgMusic.play();
 
         Menu = true;
+
+        level = new Level();
+
+        movementSystem = new MovementSystem();
+        playerSystem = new PlayerSystem();
+        objectSystem = new ObjectSystem();
+        destroySystem = new DestroySystem();
+        enemySystem = new EnemySystem();
+        weaponSystem = new WeaponSystem();
+        spawnSystem = new SpawnSystem();
+        treasureSystem = new TreasureSystem();
+        renderSystem = new RenderSystem();
+
+        hudStage = new HudStage();
+        worldManager = new WorldManager();
+        hud = hudStage.CreateStage();
+        cameraManager = new CameraManager();
+        cursorManager = new CursorManager();
+        saveSystem = new SaveSystem();
+
+        menu = new MenuStage();
+        stage = menu.CreateStage();
     }
 
     private void initGame() {
-        Vector3 screenCoordinates = new Vector3(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+
         Gdx.input.setInputProcessor(new ActionProcessor());
 
-        AndroidStage androidStage = new AndroidStage();
-        buttonStage = androidStage.CreateStage();
+        if(androidStage != null || androidDebug)
+            buttonStage = androidStage.CreateStage();
 
-        CollisionFilterManager filterManager = new CollisionFilterManager();
 
-        new WorldManager(engine);
+        worldManager.initWorld();
+        cameraManager.initCamera();
+        cursorManager.initCursor();
 
-        Level level = new Level();
-        //level.LoadLevel(1);
+        new CollisionManager(engine);
+
         TiledMap map = level.BuildLevel(world);
         level.MapBodyBuilder(map, engine);
-        SpriteBatch batch;
-        renderComponent.setBatch(batch = new SpriteBatch());
+        batch = new SpriteBatch();
+        renderComponent.setBatch(batch);
         OrthogonalTiledMapRenderer renderer;
         renderComponent.setRenderer(renderer = new OrthogonalTiledMapRenderer(map, WORLD_TO_BOX));
         renderEntity.add(renderComponent);
         engine.addEntity(renderEntity);
 
-        new CameraManager(engine);
-
-        new CursorManager(engine);
-
-        new CollisionManager(engine);
-
         engine.addSystem(objectSystem);
         engine.addSystem(spawnSystem);
+        engine.addSystem(treasureSystem);
         engine.addSystem(playerSystem);
         engine.addSystem(enemySystem);
         engine.addSystem(weaponSystem);
         engine.addSystem(movementSystem);
-        engine.addSystem(drawSystem);
-        RenderSystem renderSystem = new RenderSystem();
+        engine.addSystem(hudStage);
+        engine.addSystem(saveSystem);
         engine.addSystem(renderSystem);
         engine.addSystem(destroySystem);
     }
@@ -132,30 +186,66 @@ public class Game extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f / 255, 0f / 255, 0f / 255, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(Menu == true) {
-            stage.act(Gdx.graphics.getDeltaTime());
-            stage.draw();
-        }
-        if(gameInit == true)
+        if(gameStart == true)
         {
             initGame();
-            InputMultiplexer inputMultiplexer = new InputMultiplexer();
-            inputMultiplexer.addProcessor(buttonStage);
-            inputMultiplexer.addProcessor(new ActionProcessor());
-            Gdx.input.setInputProcessor(inputMultiplexer);
             gameOn = true;
-            gameInit = false;
+            gameStart = false;
+            pause = false;
         }
-        if(gameOn)
+        if(gameOn && pause == false)
         {
-            //fpsLogger.log();
+            if(!AprocessorSet) {
+                if (androidStage != null)
+                    inputMultiplexer.addProcessor(buttonStage);
+                inputMultiplexer.addProcessor(new ActionProcessor());
+                Gdx.input.setInputProcessor(inputMultiplexer);
+                AprocessorSet = true;
+            }
+            fpsLogger.log();
             engine.update(Gdx.graphics.getDeltaTime());
-            buttonStage.act(Gdx.graphics.getDeltaTime());
-            buttonStage.draw();
+            if(androidStage != null || androidDebug) {
+                buttonStage.act(Gdx.graphics.getDeltaTime());
+                buttonStage.draw();
+            }
+            hud.act(Gdx.graphics.getDeltaTime());
+            hud.draw();
+        }
+
+        if(Menu == true && gameOn == false) {
+            //engine.update(Gdx.graphics.getDeltaTime());
+            menu.GameOff();
+            menu.quitButton.setText("Quit Game");
+            stage.act(Gdx.graphics.getDeltaTime());
+            stage.draw();
+            Gdx.input.setInputProcessor(stage);
+            AprocessorSet = false;
+        }
+
+        if(Menu == true && gameOn == true) {
+            engine.update(Gdx.graphics.getDeltaTime());
+            menu.Paused();
+            menu.quitButton.setText("Back to Main Menu");
+            hud.act(Gdx.graphics.getDeltaTime());
+            hud.draw();
+            stage.act(Gdx.graphics.getDeltaTime());
+            stage.draw();
+            Gdx.input.setInputProcessor(stage);
+            AprocessorSet = false;
+        }
+
+        if(Save == true)
+        {
+            menu.Save();
+        }
+        if(Load == true)
+        {
+            menu.LoadData();
         }
     }
 
     @Override
     public void dispose() {
     }
+
 }

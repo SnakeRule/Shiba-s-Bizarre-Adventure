@@ -2,11 +2,16 @@ package com.shibe.game.Systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.shibe.game.Components.PlayerComponent;
-import com.shibe.game.Components.WeaponComponent;
+import com.shibe.game.Components.RenderComponent;
 import com.shibe.game.Components.WorldComponent;
+import com.shibe.game.Managers.ActionProcessor;
 import com.shibe.game.Managers.Game;
+import com.shibe.game.MenuStage;
 
 import java.util.ArrayList;
 
@@ -15,10 +20,13 @@ import java.util.ArrayList;
  */
 public class DestroySystem extends EntitySystem {
 
+    private int goalTimer;
     public static ArrayList<Body> BodyDestroyList = new ArrayList<Body>();
     public static ArrayList<Entity> EntityDestroyList = new ArrayList<Entity>();
+    public static ArrayList<Texture> TextureDestroyList = new ArrayList<Texture>();
     private ComponentMapper<WorldComponent> wm = ComponentMapper.getFor(WorldComponent.class);
     private ImmutableArray<Entity> worlds;
+    private Array<Body> bodies = new Array<Body>();
 
     public DestroySystem() {
         super();
@@ -51,5 +59,42 @@ public class DestroySystem extends EntitySystem {
         }
         BodyDestroyList.clear();
         super.update(deltaTime);
+
+        if(Game.Goal)
+        {
+            goalTimer++;
+
+            if(goalTimer > 150)
+            {
+                DestroyMap(world);
+                goalTimer = 0;
+                Game.Goal = false;
+            }
+        }
+        if(Game.Quit)
+        {
+            MenuStage.startButton.setText("Start Game");
+            DestroyMap(world);
+            Game.Quit = false;
+        }
+    }
+
+    private void DestroyMap(WorldComponent world)
+    {
+        Game.pause = true;
+        Game.Menu = true;
+        Game.Load = true;
+        Engine engine = getEngine();
+        world.world.getBodies(bodies);
+        engine.removeAllEntities();
+        for(int i = 0; i < bodies.size;i++)
+        {
+            world.world.destroyBody(bodies.get(i));
+        }
+        RenderComponent.renderer.dispose();
+        RenderComponent.batch.dispose();
+        bodies.clear();
+        Game.gameOn = false;
+        ActionProcessor.ResetControls();
     }
 }

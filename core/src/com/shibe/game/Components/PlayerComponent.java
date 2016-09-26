@@ -6,27 +6,32 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.shibe.game.Managers.WeaponManager;
+import com.shibe.game.MenuStage;
+import com.shibe.game.Systems.SaveSystem;
+//import com.shibe.game.Systems.SaveSystem;
 
-import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Jere on 26.8.2016.
  */
 public class PlayerComponent implements Component
 {
+    public int levelsUnlocked = 2;
+    public String name = MenuStage.nameArea.getText();
     public boolean TouchingLadder;
     public Body body;
     public Sprite sprite;
-    public ArrayList<WeaponManager> weapons;
     public boolean canJump;
     public int feetCollisions = 0;
-    public Texture texture1;
-    public Texture texture2;
-    public Texture texture3;
+    public int hp = 100;
+    public int maxhp = 100;
+    public int money = 0;
+    public Texture texture;
     public Vector2 SpawnPoint;
+    public ConcurrentHashMap<String, Integer> weapons;
 
-    public void setPlayer(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Fixture mainFixture, Sprite s, boolean canjump, Texture texture1, Texture texture2, Texture texture3)
+    public void setPlayer(boolean left, boolean right, boolean jump, Body body, Fixture feetFixture, Fixture mainFixture, Sprite s, boolean canjump, Texture texture)
     {
         sprite = s;
         boolean moveLeft = left;
@@ -36,9 +41,21 @@ public class PlayerComponent implements Component
         Fixture feetFixture1 = feetFixture;
         Fixture mainFixture1 = mainFixture;
         this.canJump = canjump;
-        this.texture1 = texture1;
-        this.texture2 = texture2;
-        this.texture3 = texture3;
+        this.texture = texture;
         SpawnPoint = new Vector2(body.getPosition().x,body.getPosition().y);
+        weapons = new ConcurrentHashMap();
+        weapons.put("Missile" , 5);
+
+        CheckLoad();
+    }
+
+    private void CheckLoad()
+    {
+        if(SaveSystem.playerData != null)
+        {
+            money = SaveSystem.playerData.money;
+            maxhp = SaveSystem.playerData.maxhp;
+            levelsUnlocked = SaveSystem.playerData.levelsCompleted;
+        }
     }
 }

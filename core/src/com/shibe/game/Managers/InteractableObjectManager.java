@@ -19,29 +19,31 @@ import com.shibe.game.Managers.Game;
  */
 public class InteractableObjectManager
 {
-    private Sprite objectSprite;
     private Body objectBody;
     private String Nmb;
     private Boolean Moving = false;
+    private Boolean hasSprite;
     private Boolean doorUp = false;
     private int moveCounter;
+    Texture doorImage = new Texture("Door.png");
+    Texture buttonTexture = new Texture("Button.png");
+    Sprite objectSprite;
 
-    public InteractableObjectManager(World world, Shape shape, MapObject object)
+
+    public void newObject(World world, Shape shape, MapObject object)
     {
         Entity e = new Entity();
         SpriteComponent spriteComponent = new SpriteComponent();
         PhysicsComponent physicsComponent = new PhysicsComponent();
-        PositionComponent positionComponent = new PositionComponent();
         ObjectComponent objectComponent = new ObjectComponent();
         String objectname = "";
-        {
-            Texture objectImage;
+
             if(object.getName().equals("Door")) {
                 RectangleMapObject rect = (RectangleMapObject) object;
-                objectImage = new Texture("Door.png");
+                objectSprite = new Sprite(doorImage);
                 objectname = object.getName();
                 Nmb =object.getProperties().get("Link").toString();
-                objectSprite = new Sprite(objectImage);
+                objectSprite.setTexture(doorImage);
                 objectSprite.setSize(rect.getRectangle().getWidth() * Game.WORLD_TO_BOX, rect.getRectangle().getHeight() * Game.WORLD_TO_BOX);
 
 
@@ -50,6 +52,7 @@ public class InteractableObjectManager
                 objectBodyDef.position.set(new Vector2(rect.getRectangle().getX() * Game.WORLD_TO_BOX + (objectSprite.getWidth() / 2), (rect.getRectangle().getY() * Game.WORLD_TO_BOX) + (objectSprite.getHeight() / 2)));
 
                 objectBody = world.createBody(objectBodyDef);
+                objectBody.setAwake(false);
 
                 PolygonShape objectBox = new PolygonShape();
                 objectBox.setAsBox(objectSprite.getWidth() / 2, objectSprite.getHeight() / 2);
@@ -61,6 +64,8 @@ public class InteractableObjectManager
                 Fixture fixture = objectBody.createFixture(fixtureDef);
                 fixture.setUserData("Door");
                 shape.dispose();
+
+                hasSprite = true;
             }
 
             if(object.getName().equals("Button"))
@@ -68,10 +73,10 @@ public class InteractableObjectManager
                 Nmb = object.getProperties().get("Link").toString();
                 EllipseMapObject circle = (EllipseMapObject) object;
                 objectname = object.getName();
-                objectImage = new Texture("Button.png");
+                objectSprite = new Sprite(buttonTexture);
                 TextureRegion objectRegion = new TextureRegion();
-                objectRegion.setTexture(objectImage);
-                objectRegion.setRegion(0,0, objectImage.getWidth()/4, objectImage.getHeight());
+                objectRegion.setTexture(buttonTexture);
+                objectRegion.setRegion(0,0, buttonTexture.getWidth()/4, buttonTexture.getHeight());
                 objectSprite = new Sprite(objectRegion);
                 objectSprite.setSize((float) (objectSprite.getWidth()*1.2 * Game.WORLD_TO_BOX), (float) (objectSprite.getHeight()*1.2 * Game.WORLD_TO_BOX));
 
@@ -92,40 +97,57 @@ public class InteractableObjectManager
                 Fixture fixture = objectBody.createFixture(fixtureDef);
                 fixture.setUserData("Button");
                 shape.dispose();
+
+                hasSprite = true;
             }
-        }
 
         if(object.getName().equals("Ladder"))
         {
+
             objectname = object.getName();
             BodyDef bd = new BodyDef();
             bd.type = BodyDef.BodyType.StaticBody;
             objectBody = world.createBody(bd);
+            objectBody.setAwake(false);
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
             fixtureDef.isSensor = true;
             Fixture fixture = objectBody.createFixture(fixtureDef);
             fixture.setUserData("Ladder");
-            objectBody.setUserData(objectname);
 
             shape.dispose();
+
+            hasSprite = false;
         }
 
-        if(objectSprite != null) {
+        if(object.getName().equals("Teleport"))
+        {
+
+            Nmb = object.getProperties().get("Link").toString();
+            objectname = object.getName();
+            BodyDef bd = new BodyDef();
+            bd.type = BodyDef.BodyType.StaticBody;
+            objectBody = world.createBody(bd);
+            objectBody.setAwake(false);
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            Fixture fixture = objectBody.createFixture(fixtureDef);
+            fixture.setUserData("Teleport");
+
+            shape.dispose();
+
+            hasSprite = false;
+        }
+
+        if(hasSprite) {
             spriteComponent.setSprite(objectSprite);
+            objectComponent.setSprite(objectSprite);
             e.add(spriteComponent);
         }
 
-        positionComponent.setX(objectBody.getPosition().x);
-        positionComponent.setY(objectBody.getPosition().y);
-        positionComponent.setAngle(objectBody.getAngle());
-        e.add(positionComponent);
-
-        if(objectSprite != null) {
-            objectComponent.setSprite(objectSprite);
-        }
         if(Nmb != null)
             objectComponent.setNmb(Nmb);
+
         objectComponent.setBody(objectBody);
         objectComponent.setObjectName(objectname);
         objectComponent.setSpawnY(objectBody.getPosition().y);
@@ -135,6 +157,7 @@ public class InteractableObjectManager
         physicsComponent.setBody(objectBody);
         e.add(physicsComponent);
 
+        objectBody.setUserData(e);
         Game.engine.addEntity(e);
     }
 }

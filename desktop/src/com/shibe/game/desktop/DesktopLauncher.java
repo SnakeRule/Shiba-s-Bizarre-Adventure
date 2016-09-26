@@ -1,7 +1,10 @@
 package com.shibe.game.desktop;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.shibe.game.Managers.Game;
 
 class DesktopLauncher {
@@ -10,6 +13,8 @@ class DesktopLauncher {
 		config.title = "Shibe";
 		config.width = 1920;
 		config.height = 1080;
+		config.fullscreen = true;
+		config.vSyncEnabled = true;
 		new LwjglApplication(new Game(), config);
 	}
 }
